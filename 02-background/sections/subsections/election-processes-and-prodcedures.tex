@@ -1,0 +1,157 @@
+\subsection{Processes, Procedures, Components, and Risks}
+\todo{Are these just the non-functional requirements?}
+In practice implementing a voting system can be a massive undertaking with
+tremendous consequences. For example, elections in the US dictate how and what
+policies will be implemented over the next several years. As such, there are
+serious risks and concerns that must be considered when attempting to build such
+a system. First and foremost, an implemented voting system should protect the
+voting actors as much as possible: from physical and social repercussions,
+bribery, coercion, intimidation, Second, electoral systems should ensure that
+the voting process itself is secure, i.e., resistant to corruption and
+manipulation. Finally, an implemented voting system must be scalable
+(financially, temporally, geographically, etc.) in order to be effective in
+large-scale elections. This material offers background on:
+
+\begin{itemize}
+  \item \emph{Voting Processes},
+  \item \emph{Physical Components}, and
+  \item \emph{Risks}.
+\end{itemize}
+
+\subsubsection{Voting Processes and Procedures}
+In practice, voting systems require \emph{processes and procedures} which enable
+voting actors to cast votes and express their preference. The voting process can
+generally be understood as being comprised of four distinct components:
+
+\begin{itemize}
+  \item \emph{Registration},
+  \item \emph{Verification, Authentication, and Authorization},
+  \item \emph{Vote Casting}, and
+  \item \emph{Collection and Processing}.
+\end{itemize}
+
+\paragraph{Registration}
+The registration component of the voting process is how the collection
+of eligible voters is established. The registration process varies from state to
+state in the US.\ Some states allow \emph{election day registration}, a process
+whereby one can register to vote in major federal elections on the same day you
+vote; however, most states require their electorate to register themselves
+before the election in order to have enough time to disseminate the collection
+of eligible voters to polling station officials. Several states require that the
+voting actor register up to 30 days before the day of the vote. Currently only
+five states in the US have automatic voter registration, or ``opt-out''
+registration, a process by which citizens of that state are automatically
+granted voting rights in upcoming elections if they meet eligible voter
+requirements, e.g., are over the age of 18.
+
+\paragraph{Verification, Authentication, and Authorization}
+The \emph{verification} component of a vote is the process by which a voting
+actor provides some form of identification in order to prove they are who they
+claim to be. The identity is then \emph{authenticated} via some data source by a
+polling station. After the polling station has confirmed that the voting actor
+is who they claim to be and is also registered to vote, the polling place will
+\emph{authorize} the voting actor to cast their vote. These combined processes
+prevent bad actors from manipulating the electoral system and affecting the
+outcome of the election.
+
+% These steps combined with the registration process prevent what is known as
+% Sybil attacks in peer-to-peer networks, an attack on a system by creating
+% false identities to gain influence over a system.
+
+\paragraph{Vote Casting}
+Once a voter has moved through the verification, authentication, and
+authorization processes they are eligible to cast their vote. The voting actor
+is provided a ballot to mark their preferences then able to submit their vote.
+The US does not have a consistent vote casting process across its states; some
+states use paper ballots, others use mechanical voting machines, and others use
+electronic machines. Special precautions must be taken here to ensure that votes
+are cast securely and privately.
+
+\paragraph{Collection and Processing}
+The final step of the voting process is the collection and processing component.
+This step requires that the polling places aggregate and tally all of the votes
+to determine a final result. Records must be kept that would provide a means to
+audit and recount votes if necessary. In electronic machines the collection and
+tallying process would be done by reading a memory. Mechanical machines via a
+mechanical tabulation device. Paper ballots, perhaps the most primitive, require
+either scanning technology or hand counting.
+
+
+%%
+% TODO: This section is WEAK.
+%%
+\subsubsection{Fundamental Concepts and Components}
+The physical components leveraged within the voting process are critical to
+maintaining election security, privacy, reliability, and faith in the system.
+
+\paragraph{Ballot}
+The ballot is the physical mechanism presented to the voter to cast their vote.
+How the ballot is presented and cast is an important part of securing the voting
+system and protecting the voter.
+
+\subparagraph{Secret Ballot}
+A secret ballot is a ballot which anonymizes a voting actor's choice. This is
+done for several reasons, namely to prevent voter intimidation and vote buying.
+Secret ballots are a right provided by several treaties: the \emph{Universal
+Declaration of Human Rights}, the \emph{American Convention on Human Rights},
+and the \emph{Convention on the Standards of Democratic Elections, Electoral
+Rights and Freedoms}. Secret ballots are one of the most important rights
+offered by democratic societies. Secret ballots allow voters to vote on topics
+without fear of retaliation or outcast by the rest of society. However, the term
+secret ballot is somewhat of a misnomer; a secret ballot is generally a normal
+ballot that is cast in such a way that it would not be possible to know who cast
+the ballot. For example, dropping a paper ballot into a sealed guarded box.
+Voting booths, small rooms with curtains or desks with privacy barriers in place
+to protect a voter's privacy, are another example of privacy maintain devices
+and used almost ubiquitously around the world.
+
+While there are many benefits to secret ballots secret ballots are not always
+necessary or useful to have during voting processes. For example, if a unanimous
+vote were required on a topic it might be helpful for individuals to make their
+opinions public to promote discussion. Another example would be if a
+representative were voting on a citizen's behalf, for the sake of transparency
+an open ballot would be more appropriate.
+
+\paragraph{Electronic Voting Machine}
+An electronic voting machine is an electronic device which presents voters with
+their ballot.
+
+\paragraph{Voting Booth}
+A voting booth is a safe, private, protected place for voters to mark and cast
+their ballot.
+
+\paragraph{Tallying Machines}
+Tallying machines offer fast and efficient mechanism for tallying the results of
+an election.
+
+\paragraph{Ballot Box}
+A secure location for voters to cast their vote after marking their ballot.
+
+% \begin{displayquote}
+%   These universal democratic principles can be summarized as a list of
+%   fundamental requirements, or ``six commandments,'' for electronic voting
+%   systems[citation needed]:
+%
+%   \begin{enumerate}
+%     \item Keep each voter's choice an inviolable secret.
+%     \item Allow each eligible voter to vote only once, and only for those
+%           offices for which he/she is authorized to cast a vote.
+%     \item Do not permit tampering with the voting systems operations, nor
+%           allow voters to sell their votes.
+%     \item Report all votes accurately
+%     \item The voting system shall remain operable throughout each election.
+%     \item Keep an audit trail to detect any breach of [2] and [4] but
+%           without violating [1].
+%   \end{enumerate}
+% \end{displayquote}
+
+\subsubsection{Risks}
+There are a number of risks which must be managed when conducting elections:
+
+\begin{itemize}
+  \item election fraud: machine rigging, bribing officials, etc.;
+  \item voter fraud: vote buying, ballot stuffing, intimidation, etc.
+\end{itemize}
+
+These risks are addressed in greater detail in chapter \ref{chap:literature},
+\emph{\nameref{chap:literature}}.

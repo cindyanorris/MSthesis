@@ -1,0 +1,170 @@
+\chapter{Discussion}\label{chap:discussion}
+
+\section{Contracts}
+\subsection{Delegation Contract \& Registration Authority}
+The delegation contract, and to some degree the registration authority, suffer
+from issues with respect to state management, multi-contract usage, and
+concurrency generally. It would be ideal (for conceptual, storage, and
+computational reasons) for multiple contracts to leverage the same registration
+authority and delegation contracts. Unfortunately issues begin to arise as
+electoral contracts in different phases begin querying the registration
+authorities and delegation contracts. This is further complicated as malicious
+actors attempt to subvert the electoral system.
+
+To begin to understand the issue we can imagine a single FPTP election contract
+\lstinline|A| which is leveraging a delegation contract \lstinline|D|. The FPTP
+contract \lstinline|A| expects delegation changes to continue until it enters
+its \lstinline|Tally| phase, at which point it should expect the delegation
+contract to enter a read-only or write-blocking mode. This might occur through
+some mutex mechanism. This locking mechanism is necessary because the FPTP
+election contract must accurately determine the weight of each vote for each
+delegate. If the delegation contract is not locked a delegate might transfer his
+voting power to another delegate immediately after the FPTP election contract
+\lstinline|A| determines his weight from delegation contract \lstinline|D| and
+sums the delegate's votes to the total. The following example demonstrates this
+issue:
+
+\begin{enumerate}
+    \item Voting Begins
+    \begin{enumerate}[i.]
+        \item Delegate X with a voting weight of 5 casts a ballot for choice A.
+        \item Delegate Y with a voting weight of 1 casts a ballot for choice A.
+        \item Delegate Z with a voting weight of 10 casts a ballot for choice B.
+    \end{enumerate}
+    \item Voting Ends
+    \item Tallying Begins
+    \begin{enumerate}[i.]
+        \item The election contract sums delegate X's $vote*weight$ to choice A.
+            Choice A now has 5 votes in its favor.
+        \item Delegate X confers his votes to delegate Y. Y now has a weight of
+            6 votes.
+        \item The election contract sums delegate Y's $vote*weight$ to choice A.
+            Choice A now has 11 votes in its favor.
+        \item The election contract sums delegate Z's $vote*weight$ to choice B.
+            Choice B now has 10 votes in its favor.
+    \end{enumerate}
+    \item Tallying Ends
+    \begin{enumerate}[i.]
+        \item Choice A wins by 1 vote (11 to 10) despite only having 6 votes
+            cast in its favor.
+    \end{enumerate}
+\end{enumerate}
+
+It is clear that \lstinline|B| should have won this contest 10 to 6. This
+failure to properly tally the results is a product of the classic
+readers-writers concurrency problem and represents a clear danger to any
+electoral system. A common solution to the readers-writers problem is to
+implement a simple mutex mechanism. For example, we could in the delegation
+contract allow readers to lock writing to the delegation contract until the
+readers have finished reading from the contract.  This is known as the
+readers-preference solution. A simple improvement beyond that might be to cache
+delegations in a separate data structure as a sort of journaling system while
+the delegation contract is locked. These delegations could be combined and
+applied as a single commit to the contract state as soon as the contract is
+unlocked, this is the writers-preference solution. In this way the electorate
+could still confer their votes freely to their delegates and have those
+delegations reflected in the next election or tally.
+
+This works well under some circumstances; e.g., when a small set of electoral
+contracts interacting with a delegation contract non-maliciously; however, if
+ever a malicious or broken electoral contract failed to release the lock, then
+the writers would starve, essentially preventing the electorate from ever
+conferring their votes to a delegate again.
+
+We can imagine solving this starvation issue by giving the delegation contract
+the ability to take back a mutex after a specified period of time, however, if
+the electoral contract was not malfunctioning or malicious and simply performing
+a long-running tally of votes then it's very likely that the voting actors would
+have either maliciously or accidentally corrupted the tally results once the
+delegation contract unlocked itself to commit its journaled delegations.
+
+Further, even if we imagined a perfectly functional electoral contract with a
+short tally process, issues still manifest themselves as multiple instances of
+that electoral contract begin to request the delegation contract be locked.
+There's a chance that the writers become starved if in a reader-preference
+solution. This is not so serious a concern in a writer-preference solution where
+mutexes expire, but a much larger concern then appears, which is that a
+writers-preference solution would produce an ever-expanding queue of electoral
+contracts depending on the delegation contract. This occurs because readers
+would be forced to operate serially to prevent their election contract state
+from becoming corrupted by trying to begin a read/tally process in the middle or
+late stages of another election contract's read/tally process. This is clearly
+suboptimal.
+
+The solution to this problem would likely involve the electoral contract being
+able to specify the root of the delegation contract's Merkle DAG state; this
+would functionally act as a fingerprint of the state of the delegation contract
+which the election contract wishes to operate against. This concept is not too
+dissimilar from git commits. Unfortunately the EVM does not currently offer such
+functionality.  There are several mechanisms which, if offered by Ethereum's
+EVM, would support such functionality. One mechanism to support this
+functionality would be via explicit contract state checkpoints, however, this
+would likely be a prohibitively expensive operation for storage reasons. Another
+mechanism would be to support invertible operation definitions, thus allowing a
+node to rewind the state of a contract. Such functionality would only be
+computationally expensive, but potentially prohibitively so if there had been
+many state modifications since the commit a contract wishes to operate against.
+A combination of these two mechanisms might offer the best solution.
+
+\section{Performance}
+
+
+\section{Voter Registration List Population}
+
+
+
+\subsection{Design Principles}
+We borrow design principles from ``Electoral System Design: The New
+International IDEA Handbook'' which were outlined in Chapters 2 and 3.
+
+\subparagraph{Representation} We wish to achieve fair representation. What
+constitutes fair representation will largely depend on the greater democratic
+framework and the constitutes of that framework. Our electoral system should
+translate votes into winning choices in a way that accurately and fairly
+represents the will of the people while also being flexible enough to allow for
+configuration and modification appropriate for various governance structures.
+
+\subparagraph{Transparency} Our electoral system should be as transparent as
+possible, preferably end-to-end verifiable. The winners, losers, and electorate
+must be able to trust that the results of an election were achieved
+legitimately.
+
+\subparagraph{Inclusiveness} Our electoral system should support full suffrage
+(active and passive) as well as universal suffrage. The mechanisms of the
+electoral system should not be biased such that any group is discriminated
+against. Designing an electoral system with inclusiveness in mind results in
+governance with a stronger sense of legitimacy and wider participation and
+willingness to participate by the electorate.
+
+\paragraph{International Standards} There is no universally agreed upon
+standards, but most would agree upon the following standards.
+
+\begin{enumerate}[label=\Large$\square$]
+  \item Elections should be free, fair, and periodic.
+  \item Universal adult suffrage should be supported.
+  \item Ballot secrecy should be preserved and constituents should be free
+    from coercion.
+  \item A commitment to the principle of ``one person, one vote.''
+\end{enumerate}
+
+\paragraph{Design Checklist}
+We also borrow a design checklist from the ``Electoral System Design: The New
+International IDEA Handbook.''
+\todo{This should be moved to the conclusion.}
+
+\begin{enumerate}[label=\Large$\square$]
+  \item Is the system clear and comprehensible?
+  \item Has context been taken into account?
+  \item Is the system appropriate for the time?
+  \item Are the mechanisms for future reform clear?
+  \item Does the system avoid underestimating the electorate?
+  \item Is the system as inclusive as possible?
+  \item Was the design process perceived to be legitimate?
+  \item Will the election results be seen as legitimate?
+  \item Are unusual contingencies taken into account?
+  \item Is the system financially and administratively sustainable?
+  \item Will the voters feel motivated to participate?
+  \item Is a competitive party system encouraged?
+  \item Does the system fit into a holistic constitutional framework?
+  \item Will the system help alleviate conflict rather than exacerbate it?
+\end{enumerate}

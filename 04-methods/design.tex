@@ -1,0 +1,40 @@
+\section{Architecture and Design}\label{sec:architecture-and-design}
+The design of the system is approached in three phases: authorization, election,
+and delegation. Each phase considers different components of the overall system
+architecture and each component is responsible for managing a different set of
+responsibilities within the architecture.
+
+% system. The authorization components, delegation components, and election
+% components.
+
+% , henceforth collectively referred to as Norman.
+
+% The Embark framework --- a framework designed to build Decentralized
+% Applications (DApps) --- is used to provision test networks, build, deploy,
+% and test the components. The Embark framework can manage and deploy to
+% different chains, e.g., testnet, private net, and livenet. Embark
+% automatically detects changes to contracts, builds, and then deploys the
+% contracts onto the appropriate Ethereum networks. To build Solidity code into
+% EVM code the Embark framework uses solcjs which offers JavaScript bindings for
+% the Solidity compiler. For expedited development and testing Embark exposes
+% the Ethereum JavaScript testrpc which simulates a fully functioning Ethereum
+% client. Interaction with Ethereum contracts is simplified by automatically
+% generating promise-based JavaScript functions which expose contract functions.
+% JavaScript support is provided by wrapping the web3js library which implements
+% the generic Ethereum JSON RPC spec. Embark also supports decentralized storage
+% via IPFS, decentralized messaging through Whisper and Orbit, and a curses-like
+% dashboard which exposes logs, environment, contract states, available
+% services, a console, and the status of the framework generally.
+
+\begin{center}
+  \figurepdf{venn-diagram}
+  % \includestandalone{\fig{venn-diagram}}
+\end{center}
+
+\input{04-methods/design/authorization}
+
+\input{04-methods/design/election}
+
+\input{04-methods/design/delegation}
+
+

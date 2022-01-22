@@ -1,0 +1,177 @@
+\subsubsection{Interface AccessControlList}
+
+The \solt{interface}, \sol{interface AccessControlList}, introduces five
+\solt{function} definitions to achieve basic access control list functionality:
+
+\begin{enumerate}
+  \item \sol{function hasPermission}, which validates that a \emph{subject} has
+    the \emph{permission} required access some \emph{resource}.
+
+  \item \sol{function getPermissions}, which returns the \emph{permissions} some
+    \emph{subject} has for a given \emph{resource}.
+
+  \item \sol{function setPermissions}, which updates the \emph{permissions} some
+    \emph{subject} has for a given \emph{resource}.
+
+  \item \sol{function grantPermission}, which grants a single \emph{permission}
+    for some \emph{subject} with respect to some \emph{resource}.
+
+  \item \sol{function revokePermission}, which revokes a single
+    \emph{permission} for some \emph{subject} with respect to some
+    \emph{resource}.
+\end{enumerate}
+
+\begin{solidity}[interface AccessControlList]
+interface AccessControlList {
+  function hasPermission (address _subject, bytes4 _resource, uint8 _permission)
+    public view returns (bool _hasPermission);
+
+  function getPermissions (address _subject, bytes4 _resource)
+    public view returns (uint256 _permissions);
+
+  function setPermissions (address _subject, bytes4 _resource, uint256 _permissions)
+    public returns (bool _success);
+
+  function grantPermission (address _subject, bytes4 _resource, uint8 _permission)
+    public returns (bool _success);
+
+  function revokePermission (address _subject, bytes4 _resource, uint8 _permission)
+    public returns (bool _success);
+}
+\end{solidity}
+
+\begin{interface}
+  \item \specification{}
+  \begin{functions}
+    \item \sol{function hasPermission (address _subject, bytes4 _resource, uint8 _permission)},
+      evaluates whether some \emph{subject} has the requisite \emph{permission}
+      to access some \emph{resource}.
+
+      \begin{parameters}
+        \item \sol{address _subject}, the \solt{address} of an account
+          representing the \emph{subject}, i.e., the \emph{user}, to evaluate
+          permissions against.
+        \item \sol{bytes4 _resource}, the \emph{resource}, signature hash of a
+          Solidity \solt{function}, to validate \emph{permissions} against.
+        \item \sol{uint8 _permission}, a \emph{permission} level, or
+          \emph{action}, which is being validated.
+      \end{parameters}
+
+      \begin{returns}
+        \item \sol{bool _hasPermission}, returns the \solt{true} if the
+          \emph{subject} has the requisite \emph{permission} to access the
+          \emph{resource}, otherwise \solt{false}.
+      \end{returns}
+
+    \item \sol{function getPermissions (address _subject, bytes4 _resource)},
+      retrieves the \emph{permissions}, for a \emph{<subject, resource>} pair.
+
+      \begin{parameters}
+        \item \sol{address _subject}, the account \solt{address} of the
+          \emph{subject} whose \emph{permissions} are to be retrieved.
+
+        \item \sol{bytes4 _resource}, the \emph{resource}, \solt{function}
+          signature, which the \emph{permissions} should be retrieved for.
+      \end{parameters}
+
+      \begin{returns}
+      \item \sol{uint256 _permissions}, the \solt{uint256} representation of the
+        \emph{subject's} \emph{permissions} for a given \emph{resource}.
+      \end{returns}
+
+    \item \sol{function setPermissions (address _subject, bytes4 _resource, uint256 _permissions)},
+      updates a \emph{subject's} \emph{permissions} for some \emph{resource}.
+
+      \begin{parameters}
+        \item \sol{address _subject}, the account \solt{address} of the
+          \emph{subject} whose \emph{permissions} are to be modified.
+
+        \item \sol{bytes4 _resource}, the \emph{resource}, \solt{function}
+          signature, which the \emph{permissions} are to be modified for.
+
+        \item \sol{uint256 _permissions}, the \solt{uint256} representation of
+          the \emph{subject's} new \emph{permissions} for the \emph{resource}.
+      \end{parameters}
+
+      \begin{returns}
+      \item \sol{bool _success}, resolves to \solt{true} if the operation was
+        successful, otherwise \solt{false}.
+      \end{returns}
+
+    \item \sol{function grantPermission (address _subject, bytes4 _resource, uint8 _permission)},
+      grants a \emph{subject} some \emph{permission} for a given \emph{resource}.
+
+      \begin{parameters}
+        \item \sol{address _subject}, the account \solt{address} of the
+          \emph{subject} whose \emph{permissions} are to be modified.
+
+        \item \sol{bytes4 _resource}, the \emph{resource}, \solt{function}
+          signature, which the \emph{permissions} are to be modified for.
+
+        \item \sol{uint8 _permission}, a \solt{uint8} value representing the
+          \emph{permission-bit} to enable for the \emph{<subject, resource>}
+          pair.
+      \end{parameters}
+
+      \begin{returns}
+      \item \sol{bool _success}, resolves to \solt{true} if the operation was
+        successful, otherwise \solt{false}.
+      \end{returns}
+
+    \item \sol{function revokePermission (address _subject, bytes4 _resource, uint8 _permission)},
+      revokes a \emph{subject's} \emph{permission} for a given \emph{resource}.
+
+      \begin{parameters}
+        \item \sol{address _subject}, the account \solt{address} of the
+          \emph{subject} whose \emph{permissions} are to be modified.
+
+        \item \sol{bytes4 _resource}, the \emph{resource}, \solt{function}
+          signature, which the \emph{permissions} are to be modified for.
+
+        \item \sol{uint8 _permission}, a \solt{uint8} value representing the
+          \emph{permission-bit} to revoke for the \emph{<subject, resource>}
+          pair.
+      \end{parameters}
+
+      \begin{returns}
+      \item \sol{bool _success}, resolves to \solt{true} if the operation was
+        successful, otherwise \solt{false}.
+      \end{returns}
+  \end{functions}
+\end{interface}
+
+% \paragraph{function hasPermission}
+%
+% \subparagraph{Parameters}
+% \begin{enumerate}
+%   \item \sol{address _subject}, which represents some \emph{subject}, or
+%         \emph{user}, accessing some \emph{resource}.
+%   \item \sol{bytes4 _resource}, a \emph{resource}, or Solidity
+%         \solt{function}, to validate \emph{permissions} against.
+%   \item \sol{uint8 _permission}, a \emph{permission} level, or \emph{action},
+%         which is being validated.
+% \end{enumerate}
+%
+% \subparagraph{Returns}
+% \sol{function hasPermission} is expected to \solt{return} a \solt{bool},
+% \sol{bool _hasPermission}, which resolves to \solt{true} if the
+% \emph{subject} has permission to access the \emph{resource}, Solidity
+% \solt{function} associated with \sol{bytes4 _resource}, at the
+% \emph{permission} level specified by \sol{uint8 _permission}.
+%
+% \paragraph{function getPermissions}
+% \subparagraph{Parameters}
+% \subparagraph{Returns}
+%
+% \paragraph{function setPermissions}
+% \subparagraph{Parameters}
+% \subparagraph{Returns}
+%
+% \paragraph{function grantPermission}
+% \subparagraph{Parameters}
+% \subparagraph{Returns}
+%
+% \paragraph{function removePermission}
+% \subparagraph{Parameters}
+% \subparagraph{Returns}
+%

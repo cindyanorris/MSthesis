@@ -1,0 +1,57 @@
+\paragraph{Interface Ownership}
+
+The \solt{interface}, \sol{interface Ownership}, introduces two
+\solt{function}[s] for managing contract ownership:
+
+\begin{enumerate}
+  \item \sol{function getOwner}, which is expected to return the \solt{address}
+        of the owner of the \solt{contract}, and
+  \item \sol{function setOwner}, which is expected to update the \solt{address}
+        of the owner of the \solt{contract}.
+\end{enumerate}
+
+\begin{solidity}[interface Ownership]
+interface Ownership {
+  function getOwner () public view returns (address _owner);
+  function setOwner (address _owner) public returns (bool _success);
+}
+\end{solidity}
+
+\begin{interface}
+\item \specification{}
+
+  \begin{functions}
+    \item \sol{function getOwner ()}, returns the \solt{address} of the owner of
+      the \solt{contract}.
+
+      \begin{returns}
+        \item \sol{address _owner}, the \emph{subject} representing the owner of
+          the \solt{contract}.
+      \end{returns}
+
+    \item \sol{function setOwner (address _owner)}, updates the \solt{address}
+      representing the owner of the \solt{contract}.
+
+      % which accepts an \solt{address},
+      % \sol{address _owner}, and is expected to update the owner of the
+      % \solt{contract} and \solt{return} a \solt{bool}, \sol{bool _success},
+      % which resolves to \solt{true} if the operation was successful; otherwise
+      % \solt{false}.
+
+
+      \begin{parameters}
+      \item \sol{address _owner}, the \emph{subject} which is to be granted
+        ownership of the \solt{contract}.\footnotemark{}
+
+        \footnotetext{\label{param:address-owner}
+          The \solt{address} of the \emph{subject} may be \emph{any} Ethereum
+          account, including \emph{contract accounts}.
+        }
+      \end{parameters}
+
+      \begin{returns}
+      \item \sol{bool _success}, resolves to \solt{true} if the operation was
+        successful; otherwise \solt{false}.
+      \end{returns}
+  \end{functions}
+\end{interface}

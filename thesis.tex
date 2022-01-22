@@ -1,0 +1,337 @@
+% vim: set noai:ts=2:sw=2
+\documentclass[natbib=false,MS]{./class/asu-nateph}
+%\documentclass[economy,twoside,bind]{dukedissertation}
+% Use the second for a single-spaced copy suitable for duplex printing
+% and binding.
+
+% Other useful options (there are more options documented in Chapter 2):
+%  * draft -- don't actually include images, print a black bar on overful
+%             hboxes
+%  * MS    -- Format for a Master's Thesis.  No UMI abstract page, some
+%             textual changes to title page.
+
+% Packages for debugging page layouts.
+\listfiles
+\usepackage{layouts}
+\usepackage[
+% showframe,
+verbose
+]{geometry}
+\usepackage[bottom]{footmisc} % Ensures footnotes stay at bottom of page.
+\usepackage{./class/sections}
+% Useful packages for dissertation writing:
+\usepackage[table]{xcolor} % Colors in tables (can't get this working)
+\usepackage{color}
+\usepackage{xkeyval}
+\usepackage{ifthen}
+\usepackage{xstring}
+\usepackage{xparse} % For adding new commands
+\usepackage{amsmath, amssymb, amsfonts, amsthm}
+
+\usepackage{./class/fonts}
+
+%%
+% TOC
+%%
+% \usepackage{titletoc}
+% \newcommand{\cftchapleader}{\cftdotfill{\cftdotsep}} % for chapters
+
+%%
+% Figures
+%%
+\usepackage{float} % For strict figure placement
+\usepackage{subfigure}
+\usepackage{./class/figures}
+% \usepackage{svg}
+
+\usepackage{bm}
+\usepackage{mathabx}
+\usepackage{multirow}
+\usepackage{setspace} % For modifying line spacing; helpful for table captions.
+
+\usepackage[T1]{fontenc} % Support for characters like '<' and '>'
+\usepackage{epigraph}
+\usepackage{fancyhdr} % Nathan: added myself for page header/footer styling.
+\usepackage{glossaries} % For building a glossary, not yet working
+\usepackage[mode=build]{standalone} % requires -shell-escape
+
+%%
+% Tables
+%%
+\usepackage{./class/tables}
+\usepackage[group-separator={,},group-minimum-digits=4]{siunitx}
+
+%%
+% Code
+%%
+% Offers functionality such that new paragraphs are not created after code
+% blocks.
+% \usepackage{parskip}
+
+\usepackage{./class/code}
+
+% FIXME: Remove me!
+%   Speed up builds by avoiding `asdf-vm` shim. This will obviously only work on
+%   my computer. If you're stumbling on this line just comment it out and it
+%   will work fine.
+\renewcommand{\MintedPygmentize}{/home/nate/.asdf/installs/python/3.9.1/bin/pygmentize}
+
+%%
+% Appendix
+%%
+% \usepackage[titletoc]{appendix}
+\usepackage[title,titletoc,header]{appendix}
+
+%%
+% Bibliography
+%%
+\usepackage{./class/bibliography}
+  \addbibresource{bibliography/blockchain.bib}
+  \addbibresource{bibliography/elections.bib}
+  \addbibresource{bibliography/internet-voting.bib}
+  \addbibresource{bibliography/end-to-end-verifiability.bib}
+  % \bibliographystyle{acm} % Must come after csquotes
+  % \bibliographystyle{acm} % Must come after csquotes
+  % \RenewDocumentCommand{\cite}{ m }{\supercite[f][d]{#1}}
+
+\usepackage[justification=RaggedRight]{caption} % This doesn't seem to be working.
+\usepackage{subfiles}
+
+\usepackage{./class/notes}
+
+\usepackage{multicol} % Initially added to support
+% \usepackage[Glenn]{fncychap} % Fancy chapters
+% \usepackage{cite}  % If you include this, hyperlink cites will
+                     % break.  It's nice to use this package if your bibstyle
+                     % sorts entries by order-of-use, rather than
+                     % alphabetically (as plain does).
+
+% Setting ragged bottom seems to produce *much* better results for my thesis.
+% Without ragged bottom I have huge gaps between paragraphs for no apparent
+% reason. Likely nearby images.
+\raggedbottom{}
+
+%-----------------------------------------------------------------------------%
+% PREAMBLE
+%-----------------------------------------------------------------------------%
+\author{Nathan Hernandez}
+% \title{Governance and Voting Systems Within Decentralized Organizations and Communities}
+\title{BLOCKCHAIN ELECTIONS: SMART CONTRACT ELECTORAL SYSTEM DESIGN AND IMPLEMENTATION}
+\supervisor{Dr.\ Cindy Norris}
+\department{Computer Science} % Appears as Department of \department
+% Declare dissertation subject used on UMI abstract page.  List of
+% categories: http://dissertations.umi.com/duke/subject_categories.html
+%\subject{[Your Subject Here]}
+
+\date{2016} % Anything but the year is ignored.
+
+% Copyright text.  If undefined, default is 'All rights reserved'
+% (Example sets the text to a hyperlinked Creative Commons Licence)
+\copyrighttext{All rights reserved except the rights granted by the\\
+    \href{http://creativecommons.org/licenses/by-nc/3.0/us/}
+    {Creative Commons Attribution-Noncommercial Licence}
+}
+
+% % Committee Members other than supervisor.  No more than five beyond the
+% % supervisor allowed.
+% \member{Dr.\ Rahman Tashakkori}
+% \member{Dr.\ Mitch Parry}
+% \member{Professor Frank Barry}
+% %\member{[External Committee Member]}
+%-----------------------------------------------------------------------------%
+
+
+%-----------------------------------------------------------------------------%
+% HYPERREF: plain black hypertext references for ref's and cite's.
+%-----------------------------------------------------------------------------%
+\usepackage[
+  pdfusetitle, plainpages=false,
+  bookmarks, bookmarksnumbered,
+  colorlinks, linkcolor=black, citecolor=black,
+  filecolor=black, urlcolor=black
+]{hyperref}
+\urlstyle{same} % URLs should emulate the style of surrounding text.
+
+%-----------------------------------------------------------------------------%
+% GLOSSARIES PAGE --
+%-----------------------------------------------------------------------------%
+% \makeglossaries
+
+%-----------------------------------------------------------------------------%
+% Highlighting --
+%-----------------------------------------------------------------------------%
+% \input{highlight-6.cls}
+\ProvideDocumentCommand{\highlight}{ O{} }{#1}
+\ProvideDocumentCommand{\MarkText}{ O{} }{#1}
+
+% \renewcommand{\FancyVerbBreakAnywhereBreak}{%
+%   \discretionary{\FancyVerbBreakAnywhereSymbolPre}%
+%     {\FancyVerbBreakAnywhereSymbolPost}{}}
+
+% \let\highlight\textdecor
+% \renewcommand{\textdecor}[1]{%
+%   \expandafter\FancyVerbBreakStart\highlight{\begingroup#1\endgroup}\FancyVerbBreakStop}
+
+% ASU Configuration
+% \title{MY THESIS TITLE}
+\asudegree{MASTER OF SCIENCE}
+\degreeabbrev{M.S.}
+\bachelordegree{B.S., Appalachian State University}
+\department{Computer Science}
+\gradmonth{May}
+\gradyear{2021}
+\author{Nathaniel Patrick Hernandez}
+\authorcaps{NATHANIEL PATRICK HERNANDEZ}
+\thesischair{Cindy Norris, Ph.D.}
+\thesismemberone{E. Frank Barry}
+\thesismembertwo{R. Mitchell Parry, Ph.D.}
+\thesismemberthree{Rahman Tashakkori, Ph.D.}
+\deptchair{Rahman Tashakkori, Ph.D.}
+\dean{Michael J. McKenzie, Ph.D.}
+
+%-----------------------------------------------------------------------------%
+% Document --
+%-----------------------------------------------------------------------------%
+
+% Use this to render a subset of your chapters or comment it out to render
+% everything.
+\includeonly{
+./abstract/abstract,
+./acknowledgements/acknowledgements,
+./abbreviations/listofabbr,
+./01-introduction/introduction,
+./02-background/background,
+./03-literature/literature,
+./04-methods/methods,
+./05-results/results,
+./07-conclusion/conclusion,
+./appendix/appendix,
+./biography/biography,
+}
+
+\begin{document}
+
+% \drawmarginparstrue
+% \currentpage
+% \pagedesign
+
+\VerbatimFootnotes{} % Enable inline verbatim/code in footnotes of document.
+
+\begin{preliminary}
+    %-----------------------------------------------------------------------------%
+    % title page -- provides umi abstract title page & copyright if appropriate
+    %-----------------------------------------------------------------------------%
+    \maketitle
+
+  %-----------------------------------------------------------------------------%
+  % COMMITTEE APPROVAL PAGE
+  %-----------------------------------------------------------------------------%
+  \makeapproval
+
+  %-----------------------------------------------------------------------------%
+  % COPYRIGHT PAGE
+  %-----------------------------------------------------------------------------%
+  \makecopyright
+
+  %-----------------------------------------------------------------------------%
+  % ABSTRACT -- included file should start with '\abstract'.
+  %-----------------------------------------------------------------------------%
+  % \addcontentsline{toc}{chapter}{Abstract}
+  \include{./abstract/abstract}
+
+  %-----------------------------------------------------------------------------%
+  % ACKNOWLEDGEMENTS -- included file should start with '\acknowledgements'
+  %-----------------------------------------------------------------------------%
+  \include{./acknowledgements/acknowledgements}
+  % \addcontentsline{toc}{chapter}{Acknowledgements}
+
+  %-----------------------------------------------------------------------------%
+  % DEDICATION -- OPTIONAL.  Put the text inside the braces.
+  %               (Long 'dedications' probably belong in the acknowledgements)
+  %-----------------------------------------------------------------------------%
+  % \dedication{If you want to dedicate your thesis to anyone do so here}
+
+  %-----------------------------------------------------------------------------%
+  % FRONTMATTER -- ToC is required, LoT and LoF are required if you have any
+  % tables or figures, respectively. List of Abbreviations and Symbols is
+  % optional.
+  %-----------------------------------------------------------------------------%
+  \setstretch{1} % This should be \singlespacing
+  \tableofcontents % Automatically generated
+  \listoffigures	% If you have any figures, automatically generated
+  \listoftables	% If you have any tables, automatically generated
+  % \listoflistings % List of listings
+  \tcblistof[\chapter*]{solidity}{List of Listings}
+  \addcontentsline{toc}{chapter}{List of Listings}
+  \include{./abbreviations/listofabbr} % List of Abbreviations. Start file with '\abbreviations'
+  % \include{./glossary/glossary} % Glossary. Start file with '\printglossaries'
+\end{preliminary}
+
+%==============================================================================
+%-----------------------------------------------------------------------------%
+%
+% MAIN BODY OF PAPER
+%
+%
+%-----------------------------------------------------------------------------%
+\setstretch{2} % This should be \doublespacing
+\include{./01-introduction/introduction}
+\include{./02-background/background} % A regular chapter, starts with '\chapter{Title}'
+\include{./03-literature/literature}
+\include{./04-methods/methods}
+\include{./05-results/results}
+% \include{./06-discussion/discussion}
+\include{./07-conclusion/conclusion}
+%==============================================================================
+
+%-----------------------------------------------------------------------------%
+% BIBLIOGRAPHY -- uncomment \nocite{*} to include items in 'mybib.bib' file
+% that aren't cited in the text.  Change the style to match your
+% discipline's standards.  Of course, if your bibliography file isn't called
+% 'mybib.bib' you might want to change that here too :)
+%-----------------------------------------------------------------------------%
+\begin{spacing}{2}
+  % Includes un-cited references in the bibliography from `.bib` files.
+  \nocite{*}
+
+  %%
+  % natbib
+  %%
+  %% \bibliographystyle{humannat} %Formats bibliography
+  % \bibliographystyle{bibliography/jasa} %Formats bibliography
+  % \cleardoublepage{}
+  % \normalbaselines{} %Fixes spacing of bibliography
+  % \addcontentsline{toc}{chapter}{Bibliography} %adds Bibliography to your table of contents
+  %% your bibliography file(s) - change the path if needed
+  % \bibliography{
+  %   bibliography/blockchain,
+  %   bibliography/elections,
+  %   bibliography/internet-voting
+  % }
+
+  %%
+  % biblatex
+  %%
+  \printbibliography[heading=bibintoc]{}
+  % \printbibliography[keyword={blockchain}, heading=bibintoc]{}
+\end{spacing}
+
+%-----------------------------------------------------------------------------%
+
+%-----------------------------------------------------------------------------%
+% APPENDICES -- OPTIONAL. These are just chapters enumerated by Appendix A,
+%                Appendix B, Appendix C...
+%-----------------------------------------------------------------------------%
+\setstretch{2} % This should be \singlespacing
+\include{./appendix/appendix} % Start with '\chapter{Title}'
+%You can always add more appendices here if you want
+
+%-----------------------------------------------------------------------------%
+% BIOGRAPHY -- Start file with '\biography'.  Mandatory for Ph.D.
+%-----------------------------------------------------------------------------%
+% \addcontentsline{toc}{chapter}{Vita}
+\include{./biography/biography}
+
+%-----------------------------------------------------------------------------
+% You're done :)
+\end{document}

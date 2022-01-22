@@ -1,0 +1,79 @@
+\subsubsection{Contract Owned}
+
+A convenience \solt{contract}, \sol{contract Owned}, implements
+\sol{interface Ownership} and extends \sol{contract RestrictTo}; in doing so,
+\sol{contract Owned} provides a simple mechanism for expressing \solt{contract}
+ownership, extending \sol{contract Owned}; e.g., \sol{contract MyContract is
+Owned {}}.
+
+% Upon creation, the \solt{constructor} of this \solt{contract} sets the
+% \solt{owner} property of the \solt{contract} to the \solt{address} which
+% created the contract, and restricts future calls to the \sol{function
+% setOwner} to the owner of the \solt{contract} by using the \sol{modifier
+% restrictTo(owner)}.
+
+\begin{solidity}[contract Owned]
+contract Owned is RestrictTo, Ownership {
+  address public owner;
+
+  constructor () {
+    owner = msg.sender;
+  }
+
+  function getOwner () public view returns (address _owner) {
+    return owner;
+  }
+
+  function setOwner (address _owner) public restrictTo(owner) returns (bool _success) {
+    owner = _owner;
+    return true;
+  }
+}
+\end{solidity}
+
+\begin{state}
+  \begin{public}
+    \item \sol{address owner}, maintains the \solt{address} of the current
+      \solt{owner} of the \solt{contract}.
+  \end{public}
+\end{state}
+
+\begin{code}
+  \begin{constructor}
+    \item \sol{constructor ()}, upon creation and initialization of this
+      \solt{contract} the \solt{constructor} sets the \sol{address owner}
+      property of the \solt{contract} to the \solt{address} of the
+      \solt{contract} creator, \sol{msg.sender}, i.e., the \emph{subject}
+      submitting the \solt{CREATE} opcode.
+  \end{constructor}
+
+  \begin{functions}
+    \item \sol{function getOwner ()}, returns the \solt{address} of the owner of
+      the \solt{contract}.
+
+      \begin{returns}
+        \item \sol{address _owner}, the \emph{subject} representing the owner of
+          the \solt{contract}.
+      \end{returns}
+
+    \item \sol{function setOwner (address _owner)}, updates the \solt{address}
+      representing the owner of the \solt{contract}, effectively transferring
+      ownership of the \solt{contract}.
+
+      \begin{modifiers}
+        \item \sol{modifier restrictTo (owner)}, restricts access to the
+          \solt{function} such that \emph{only} the current \solt{owner} of the
+          \solt{contract} can update/transfer ownership of the \solt{contract}.
+      \end{modifiers}
+
+      \begin{parameters}
+        \item \sol{address _owner}, the \emph{subject} who is to be granted access
+          to the \solt{function}.
+      \end{parameters}
+
+      \begin{returns}
+        \item \sol{bool _success}, the \emph{subject} representing the owner of
+          the \solt{contract}
+      \end{returns}
+  \end{functions}
+\end{code}

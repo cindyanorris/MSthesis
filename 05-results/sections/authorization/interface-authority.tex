@@ -1,0 +1,47 @@
+\subsubsection{Interface Authority}
+
+The \solt{interface}, \sol{interface Authority}, introduces functionality for
+managing whether some \emph{subject}, typically an Ethereum account represented
+by \solt{address}, can access some \emph{resource}, typically an Ethereum
+\solt{function} represented by \solt{function} signature, \solt{bytes4}. By
+defining the \emph{resource} by it's \solt{function} signature and not by a
+specific \solt{function} owned by a specific \solt{contract} we leave open the
+possibility for managing \solt{contract} access control across
+\solt{contract}[s], a functionality which will be necessary to build
+pseudo-centralized registration authorities.
+
+\begin{solidity}[interface Authority]
+interface Authority {
+  function canCall (address _subject, bytes4 _resource) public constant returns (bool _canCall);
+}
+\end{solidity}
+
+\begin{interface}
+  \item \specification{}
+
+  \begin{functions}
+    \item \sol{function canCall (address _subject, bytes4 _resource)}, evaluates
+      whether some \emph{resource}, \solt{contract function}, can be used by
+      some \emph{subject}, Ethereum account.
+
+      \begin{parameters}
+        \item \sol{address _subject}, the \emph{subject}, Ethereum account,
+          whose permissions are being evaluated.\footnotemark{}
+
+          \footnotetext{
+            The \solt{address} of the \emph{subject} may be \emph{any} Ethereum
+            account, including \emph{contract accounts}.
+          }
+
+        \item \sol{bytes4 _resource}, the \emph{resource}, \solt{contract
+          function}, which the \emph{subject's} permissions are being evaluated
+          against.
+      \end{parameters}
+
+      \begin{returns}
+        \item \sol{bool _canCall}, resolves to \solt{true} if the
+          \emph{subject}, \sol{address _subject}, is permitted to access the
+          \emph{resource}, \sol{bytes4 _resource}, otherwise \solt{false}.
+      \end{returns}
+  \end{functions}
+\end{interface}

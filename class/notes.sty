@@ -1,0 +1,29 @@
+% Styling for footnotes, todos, etc.
+
+% Adds support for TODO notes in latex.
+\usepackage[
+  linecolor=green!100,
+  bordercolor=green!100,
+  backgroundcolor=green!10,
+  textsize=tiny,
+  shadow,
+  disable,
+]{todonotes}
+% \reversemarginpar{} % Render the todo notes in the left margin.
+
+\usepackage{marginnote}
+
+\newcommand{\note}[1]{%
+  \begingroup
+  \renewcommand\thefootnote{}\footnote{#1}%
+  \addtocounter{footnote}{-1}%
+  \endgroup
+}
+
+% Package: todonotes
+% \renewcommand{\marginpar}{\marginnote} % TODO in footnotes
+% \setuptodonotes{fancyline}
+
+% NOTE: Initially added to support multiple columns in table's caption with
+% itemize.
+%%

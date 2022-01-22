@@ -1,0 +1,27 @@
+\subsection{Registries}
+
+Having completed the work of generalizing access control and building access
+control lists, we now introduce a simplified access control model for managing
+voter registration during elections.
+
+\begin{enumerate}
+  \item \sol{interface Registry}, which defines the functions for registering
+    voters for an election, and
+  \item \sol{contract VoterRegistrationAuthority}, which implements and
+    aggregates several \solt{interface}[s] and \solt{interface} implementations
+    --- namely \sol{interface Registry}, \sol{interface Authority}, and
+    \sol{contract ACLAuthority} --- to build a trusted source of registered
+    voters.
+\end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \figurepdf[]{registry}
+  \caption{Simplified election registry.}\label{fig:registry}
+  % \includegraphics[width=\textwidth]{figures/authorization/figure}
+  % \includestandalone[width=\textwidth]{\fig{authorization}}
+\end{figure}
+
+\input{appendix/code/authorization/registries/interface-registry}
+
+\input{appendix/code/authorization/registries/contract-voter-registration-authority}

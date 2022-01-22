@@ -1,0 +1,147 @@
+\section{Elections}\label{sec:elections}
+Elections are perhaps the most obvious and intuitive means of allowing members
+of a population to express their will and take part in their governance process.
+An election is the generalized process of allowing individuals to express their
+preference, typically by way of vote, as a means to come to consensus as a
+group. The generalized goal of elections is to reach a consensus which
+accurately and fairly reflects the preferences of the participating voters.
+This, at first glance, seems like a trivial problem, and generally is in
+circumstances where the number of voters and choices is small in number.
+However, elections become complex as the number of actors, choices, or election
+cycles increase. There are social, mathematical, and practical engineering
+constraints which all voting systems are bound by, subjected to, and forced to
+address.
+
+% If we exclude singular autocratic and chaotic anarchic forms of governance then
+% a system usually arises where voting is necessary.
+
+\subsection*{Electoral Systems}
+An electoral system, is the combination of rules, norms, and procedures which
+define how a final result, and ultimately consensus, will be determined during
+an election. Electoral systems can considered as a composition of three
+components: ballot, choices, and tallying algorithm. These three components can
+be woven together to produce a wide spectrum of electoral systems with varying
+characteristics and properties. The choice and implementation of electoral
+system has a direct and profound impact on the ways in which democratic systems
+can and will operate as well as on the perceived legitimacy of the governance
+model. The decisions concerning the implementation details of electoral systems
+are among the most important decisions that any democratic organization will
+make; the choice of design impacts all future decision making processes and
+shapes the future of the governance model itself. A poorly designed electoral
+system can have disastrous effects on the health and perceived legitimacy of a
+democratic organization both in the immediate and long-term future. Further,
+once chosen, an electoral system can be difficult to amend as political
+interests respond to and solidify around the incentives presented to them which
+are inherent to the electoral system chosen.\cite{electoral-handbook}
+
+\paragraph{Choices}
+A electoral system's choices are the set of options that a voting actor can
+select from; they are the \emph{who} or \emph{what} being decided in an
+election. The choices available may be determined by primary vote, polling,
+write-in, debate, etc.\ or some other methodology or combination of
+methodologies.
+
+\subparagraph{District Magnitude}
+The number of choices that will be selected as winners is of great importance in
+an election. In representative democracies the measurement of seats (choices)
+available is known as district magnitude. An election where the district
+magnitude is one, i.e., where a single candidate or choice is to be elected or
+selected, is known as a single-member district (SMD) or single-winner district.
+An election where the district magnitude is greater than one, i.e., multiple
+candidates are to be elected, is known as a multi-member district (MMD) or
+multi-winner district.% \footnotemark{}
+
+% \footnotetext{
+%   % Much of the literature surrounding electoral systems presumes democracy via
+%   % representation; this has had an influence on the language and terminology
+%   % used to describe electoral systems. For example, when evaluating district
+%   % magnitude terms such as ``single-member district'' and ``multi-member
+%   % district'' are used --- implying that the seats available for candidacy is
+%   % the metric being measured --- however, the significance of these concepts
+%   % applies just the same to a vote being used to determine which pizza or
+%   % pizzas should be ordered for a birthday party.
+%   %
+%   Much of the literature surrounding electoral systems presumes democracy via
+%   representation; this has had an influence on the language and terminology used
+%   to describe electoral systems. For example, a term such as ``district
+%   magnitude'' implies that the seats available for candidacy is the metric being
+%   measured; however, the significance of this concept applies just the same when
+%   considering a vote to determine which pizza or pizzas should be ordered for a
+%   birthday party.
+% }
+
+% \paragraph{Indirect Election}
+% An \textbf{indirect election} is a vote where actors vote for persons who then
+% elect a candidate themselves. The electoral college used in the United States
+% is an example of this. When voting actors cast their vote for a particular
+% candidate they're actually voting for \textbf{electors}, members of the
+% electoral college who are typically aligned with the candidate's party. These
+% electors are expected to vote for the candidate who wins the majority vote in a
+% their state. In all but two states the electors are ``winner-take-all'', that
+% is, if a candidate wins the popular vote in a state, e.g., by 50.1\%, then all
+% of the electors selected for that state will be electors aligned with the
+% winning candidate.
+%
+% \paragraph{Direct Election}
+% A \textbf{direct election}, in contrast to an indirect election, is a vote
+% where a voting actor's votes are cast directly for a candidate.
+
+\paragraph{Ballot}
+A ballot is the means through which voting actors express their vote. The
+structure of the ballot influences exactly \emph{how} the voter can express
+their preferences for a choice or choices, e.g., how many votes an individual is
+able to cast. This is directly influenced by the tallying method. Ballots, in
+some texts, are regarded as a process of voting; here the term is used to
+describe both the medium through which a voting actor marks their choice (e.g.,
+paper, punch card, or electronic machine), as well as the rules regarding how
+they can mark said medium. The ballot might be thought of as the data structure
+used to support the tallying algorithm.
+
+\subparagraph{Preference Marking}
+Preference marking is a ballot marking process where the electorate is given an
+opportunity to rank choices: cardinally, ordinally, or by approval. This
+expression of preference offers greater insights and details into the will and
+desires of the electorate and can be used by the tallying method and election
+officials to more optimally determine winners in an election. Preference marking
+may be mandatory or optional depending on the design of the electoral system.
+
+\paragraph{Electoral Formula}
+The electoral formula is the process used to translate ballots into winning
+decisions. The electoral formula is best characterized by its tallying method,
+and in multi-member districts, its proportionality.
+
+\subparagraph{Tallying Method}
+The tallying method, or tallying algorithm, is closely tied to how a voter is
+allowed to mark a ballot and affects how a marked ballot is ultimately counted
+in the final tally of an election. Different processes of varying complexities
+exist to count votes. Naturally, the process through which votes are tallied
+will have a direct and significant influence on the outcome of an election.
+
+\subparagraph{Proportionality}
+Proportionality characterizes how closely votes cast translate into choices won.
+The significance of proportionality becomes especially relevant as the district
+magnitude increases. The closer in proportion that winning choices are to the
+votes cast for them, the greater the system expresses proportionality. Analyzing
+the votes cast and how they map to winning choices and ``wasted votes'' is the
+easiest method to determine the proportionality of an electoral formula and is
+commonly expressed as the index of disproportionality.
+
+% \subsubsection{Conclusion}
+% The choices affect \emph{who/what} you vote for, the ballot affects \emph{how}
+% you express your vote, and the tallying method affects the way your expressed
+% vote impacts the final results.
+
+% \paragraph{Plurality Voting}
+% A \textbf{plurality vote} system is one where
+
+% Sub-Section: Evaluating Electoral Systems
+\input{02-background/sections/subsections/electoral-system-taxonomy}
+
+% Sub-Section: Evaluating Electoral Systems
+\input{02-background/sections/subsections/evaluating-electoral-systems}
+
+% Sub-Section: Processes, Procedures, Components, and Risks
+% \input{02-background/sections/subsections/election-processes-and-prodcedures}
+
+% Sub-Sub-Section: Voting Systems
+% \input{02-background/sections/subsections/voting-systems}

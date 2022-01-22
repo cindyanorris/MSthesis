@@ -1,0 +1,210 @@
+\section{Requirements}\label{sec:requirements}
+Borrowing from the requirements introduced and defined by, ``The Future of
+Voting: End-to-End Verifiable Internet Voting''\cite{e2e-viv} --- which were
+outlined in Chapter~\ref{chap:literature}, \emph{\nameref{chap:literature}}, and
+grouped into two major categories: technical and non-functional --- a set of
+requirements are identified and targeted for satisfaction. These requirements
+provide a framework to analyze the results produced by this research.
+Table~\ref{tab:research-requirements} summarizes the requirements targeted for
+fulfillment.
+
+% % \NewDocumentCommand{\vgood}{ O{\cmark} }{\cellcolor{green!40}#1}
+% % \begin{minipage}[t]{1\linewidth}
+%   \begin{minipage}[t]{0.50\textwidth}
+%     \begin{enumerate}[label=, leftmargin=0mm, topsep=2mm, align=left]
+%       % \small
+%       \normalsize
+%       \item \textbf{Technical Requirements}
+%       \item[\faCheck]        authentication requirements
+%       \item[\faCheck]        system operational requirements
+%       \item[\faPlus]         reliability requirements
+%       \item[\faPlus]         security requirements
+%       \item[\faPlus]         auditing requirements
+%       \item[\faPlus]         functional requirements
+%       \item[\faMinus]        interoperability requirements
+%       \item[\faMinus]        certification requirements
+%       \item[\faRemove]       accessibility requirements
+%       \item[\faRemove]       usability requirements
+%     \end{enumerate}
+%   \end{minipage}
+%   \begin{minipage}[t]{0.50\textwidth}
+%     \begin{enumerate}[label=, leftmargin=0mm, topsep=2mm, align=left]
+%       % \small
+%       \normalsize
+%       \item \textbf{Non-Functional Requirements}
+%       \item[\faPlus]         maintenance/evolvability requirements
+%       \item[\faPlus]         assurance requirements
+%       \item[\faRemove]       operational requirements
+%       \item[\faRemove]       procedural requirements
+%       \item[\faRemove]       legal requirements
+%     \end{enumerate}
+%   \end{minipage}\\
+%   % \begin{multicols}{2}
+%   % \begin{itemize}[label=,leftmargin=7mm,topsep=-40mm]
+%   \begin{itemize}[label=, leftmargin=0mm, topsep=3mm]
+%     % Reduce item separation.
+%     % \setlength\itemsep{-5mm}
+%     \scriptsize
+%     \footnotesize
+%     \item[\faCheck]        Requirements which are targeted to be \emph{fully} satisfied.
+%     \item[\faPlus]         Requirements which are targeted to be \emph{mostly} satisfied.
+%     \item[\faMinus]        Requirements which are targeted to be \emph{partially} satisfied.
+%     \item[\faRemove]       Requirements which are expected to remain \emph{unsatisfied}.
+%   \end{itemize}
+%   % \end{multicols}
+% % \end{minipage}
+
+\begin{spacing}{1.1}
+  \begin{longtabu} to \textwidth{X[0.1,l] X[2.3,j] X[0.8,c] X[0.8,c] X[0.8,c] X[1.1,c]}
+    % \multicolumn{2}{c}{Requirements} \\
+    \caption{Requirements targeted for fulfillment.} \\
+    \toprule
+    \multicolumn{2}{l}{{Requirements}}                                       & \multicolumn{3}{c}{Targeted}                  & {Untargeted} \\
+                                                                               \cmidrule{3-5}
+    \multicolumn{2}{l}{}                                                     & {Fully}       & {Mostly}       & {Partially}  &               \\
+    \midrule
+    \endhead
+    \multicolumn{2}{l}{\emph{Technical}} \\
+    % \addlinespace[-0.4ex]
+    % \cmidrule(lr){1-2} \cmidrule(lr){3-5} \cmidrule(lr){6-6}
+    % \addlinespace[-0.4ex]
+    % \cline{1-2}
+    % \midrule
+    % \multirow{10}{*}{\rot[90]{Technical}}     & Authentication               & \textbullet{} &                &               &               \\
+                                              & Authentication               & \textbullet{} &                &               &               \\
+                                              & System Operational           & \textbullet{} &                &               &               \\
+                                              & Reliability                  &               & \textbullet{}  &               &               \\
+                                              & Security                     &               & \textbullet{}  &               &               \\
+                                              & Auditing                     &               & \textbullet{}  &               &               \\
+                                              & Functional                   &               & \textbullet{}  &               &               \\
+                                              & Interoperability             &               &                & \textbullet{} &               \\
+                                              & Certification                &               &                & \textbullet{} &               \\
+                                              & Accessibility                &               &                &               & \textbullet{} \\
+                                              & Usability                    &               &                &               & \textbullet{} \\
+    % \midrule
+    % \cmidrule(lr){1-2} \cmidrule(lr){3-5} \cmidrule(lr){6-6}
+    \addlinespace[0.4ex]
+    \cmidrule(lr){1-2} \cmidrule(lr){3-5} \cmidrule(lr){6-6}
+    \multicolumn{2}{l}{\emph{Non-Functional}} \\
+    % \cline{1-2}
+    % \cmidrule{1-2}
+    % \midrule
+    % \multirow{5}{*}{\rot[90]{Non-Functional}} & Maintenance/Evolvability     &               & \textbullet{}  &               &               \\
+                                              & Maintenance/Evolvability     &               &                & \textbullet{} &               \\
+                                              & Assurance                    &               &                & \textbullet{} &               \\
+                                              & Operational                  &               &                &               & \textbullet{} \\
+                                              & Procedural                   &               &                &               & \textbullet{} \\
+                                              & Legal                        &               &                &               & \textbullet{} \\
+    \bottomrule\label{tab:research-requirements}
+  \end{longtabu}
+\end{spacing}
+
+The requirements identified in ``The Future of Voting: End-to-End Verifiable
+Internet Voting'' have rightfully demanding and difficult to meet criteria for
+fulfillment; however, the expectations laid out for a system of the kind
+imagined in the study are far beyond the scope of this research. Therefore, a
+subset of the technical and non-functional requirements are identified which
+are considered achievable, relevant, and within the scope of this research. The
+requirements are individually assessed and categorized based on whether their
+criteria for satisfaction are considered feasible to fully, mostly, or partially
+satisfy. The remaining requirements are considered either outside of the scope
+of this research or not feasible to otherwise fulfill and are therefore not
+targeted. Several requirements are identified which are considered partially or
+mostly satisfied by virtue of intrinsic properties made available through the
+underlying blockchain technology.
+
+% \begin{center}
+% \begin{spacing}{1.5}
+%   \begin{longtabu} to \textwidth{ X[1] X[1] }
+%     % \multicolumn{2}{c}{Requirements} \\
+%     \toprule
+%     {Technical Requirements}        & {Non-Functional Requirements}        \\
+%     \midrule
+%     \endhead
+%     \faCheck{}  authentication      & \faPlus{}   maintenance/evolvability \\
+%     \faCheck{}  system operational  & \faPlus{}   assurance                \\
+%     \faPlus{}   reliability         & \faRemove{} operational              \\
+%     \faPlus{}   security            & \faRemove{} procedural               \\
+%     \faPlus{}   auditing            & \faRemove{} legal                    \\
+%     \faPlus{}   functional          &                                      \\
+%     \faMinus{}  interoperability    &                                      \\
+%     \faMinus{}  certification       &                                      \\
+%     \faRemove{} accessibility       &                                      \\
+%     \faRemove{} usability           &                                      \\
+%     \bottomrule
+%   \end{longtabu}
+% % \begin{multicols}{2}
+%   \begin{itemize}[label=,leftmargin=0mm,topsep=0mm]
+%     % Reduce item separation.
+%     % \setlength\itemsep{-5mm}
+%     \scriptsize
+%     \footnotesize
+%     \item[\faCheck]        Requirements which are targeted to be \emph{fully} satisfied.
+%     \item[\faPlus]         Requirements which are targeted to be \emph{mostly} satisfied.
+%     \item[\faMinus]        Requirements which are targeted to be \emph{partially} satisfied.
+%     \item[\faRemove]       Requirements which are expected to remain \emph{unsatisfied}.
+%   \end{itemize}
+% % \end{multicols}
+% \end{spacing}
+% \end{center}
+
+\subsection{Technical Requirements}
+The technical requirements are requirements which the study asserts should be
+fulfilled through the design and architecture of the system. This research
+attempts to fully satisfy the authentication and system operational
+requirements; considers the accessibility and usability requirements beyond the
+scope of this research, and therefore makes no effort to satisfy them; and
+targets partial satisfaction of the remaining requirements. Requirements which
+are targeted to be partially satisfied are reviewed in further detail.
+
+\paragraph{Reliability and Security Requirements}
+Reliability and security requirements are considered \emph{mostly} satisfiable
+due to the inherent properties made available by Ethereum and its decentralized
+structure; however, there are some notable potential attacks on the network
+which are worth considering; these are discussed in further detail in
+Chapter~\ref{chap:results}, \emph{\nameref{chap:results}}.
+
+\paragraph{Auditability Requirements}
+Ethereum inherently offers a tremendously detailed log through its blockchain
+structure which provides a wide range of opportunities for detailed auditing and
+validation. Furthermore, auditing and validation functionality are inherent
+features of the blockchain. However, the auditability which Ethereum provides is
+not considered a privacy preserving feature and therefore falls short of the
+criteria presented.
+
+\paragraph{Functional Requirements}
+A subset of the functional requirements are deemed relevant to this research:
+
+\begin{itemize}[topsep=0pt]
+  \item[\faCheck] Multi-vote functionality is targeted to be investigated and
+    fully satisfied in all electoral system implementations.
+    % However, the receipt freedom which it is generally meant to reflect is not
+    % satisfied along with it.
+
+  \item[\faPlus] Ensuring that ``a voter's ballot, and the act of them casting a
+    ballot, is recorded and retained as expected;'' is considered \emph{mostly}
+    fulfilled through intrinsic properties of the Ethereum blockchain. Where
+    this property falls short is when a voter casts a ballot, broadcasts a
+    transaction to the network, which miners fail to include in any blocks. This
+    is discussed further in Chapter~\ref{chap:results},
+    \emph{\nameref{chap:results}}.
+
+  \item[\faMinus] Maintaining voter anonymity is considered \emph{partially}
+    fulfilled through intrinsic properties of the Ethereum blockchain. While it
+    is \emph{technically} possible to broadcast privacy-maintaining
+    transactions, those which preserve anonymity on the Ethereum network, it is
+    likely beyond the capabilities of most voting actors and would be difficult
+    to guarantee in any meaningful way. Pseudo-anonymity is a better profile of
+    the kind of anonymity which Ethereum offers, This is discussed further in
+    Chapter~\ref{chap:results}, \emph{\nameref{chap:results}}.
+\end{itemize}
+
+\subsection{Non-Functional Requirements}
+The non-functional requirements are those which the study asserts must be
+fulfilled by entities external to the system itself. These requirements are
+regarded as being mostly beyond the scope and context of this research, however,
+the existence of this document does itself at least \emph{partially} satisfy
+some of the categories of requirements, e.g., assurance, maintenance, and
+evolvability. Detailed documentation regarding design, architecture and
+implementation is provided in Appendix~\ref{appendix:documentation},
+\emph{\nameref{appendix:documentation}}.

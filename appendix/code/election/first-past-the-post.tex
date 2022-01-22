@@ -1,0 +1,254 @@
+% \subsubsection{Contract FirstPastThePost}
+
+% The first-past-the-post \solt{contract} is the simplest election \solt{contract}
+% implementation.
+
+\begin{solidity}[contract FirstPastThePost]
+contract FirstPastThePost is Owned, Guard {
+  uint public creationTime = now;
+
+  Choice[] public choices;
+  mapping(address => bool) public voted;
+  Choice public winner;
+
+  enum Phase { Configuration, Frozen, Vote, Tally }
+
+  struct PhaseProperties {
+    Phase phase;
+    uint startTime;
+    uint endTime;
+    Phase nextPhase;
+  }
+
+  mapping (Phase => PhaseProperties) phases;
+  Phase public phase = Phase.Configuration;
+
+  constructor () {
+    phases[Phase.Configuration] = PhaseProperties({
+      phase: Phase.Configuration,
+      start_time: now,
+      end_time: 0,
+      next_phase: Phase.Configuration
+    });
+  }
+
+  // This is the current phase.
+  uint public freezeTime;
+
+  // Start and end time for the election.
+  uint public voteStartTime;
+  uint public voteEndTime;
+
+  // This is a type for a single proposal.
+  struct Choice {
+    // Short name (up to 32 bytes).
+    bytes32 name;
+
+    // TODO: choice description?
+    // bytes32 description;
+
+    // Number of accumulated votes.
+    uint40 voteCount;
+  }
+
+  // Restrict calls to _account.
+  modifier restrictTo(address _account) {
+    require(msg.sender == _account);
+    _;
+  }
+
+  // Check current stage.
+  modifier atPhase(Phase _phase) {
+    require(phase == _phase);
+    _;
+  }
+
+  // This modifier goes to the next phase after the function is done.
+  modifier transitionNextPhase() {
+    _;
+    nextPhase();
+  }
+
+  // Move into next phase.
+  function nextPhase() internal {
+    phase = Phase(uint(phase) + 1);
+  }
+
+  // Perform timed transitions. Be sure to mention this modifier first,
+  // otherwise the guards will not take the new stage into account.
+  modifier timedTransitions() {
+    if (phase == Phase.Frozen && now >= voteStartTime)
+      nextPhase();
+    if (phase == Phase.Vote && now >= voteEndTime)
+      nextPhase();
+    // The other stages transition by transaction
+    _;
+  }
+
+  /* Election Functions */
+  // Freeze the configuration.
+  function freeze() restrictTo(owner) atPhase(Phase.Configuration) transitionNextPhase {
+    require(voteStartTime > now);
+    require(choices.length > 1);
+    freezeTime = now;
+    delete owner;
+  }
+
+  // Cast a ballot.
+  function vote(uint8 choice) timedTransitions atPhase(Phase.Vote) {
+    // Each address can only vote once.
+    require(!voted[msg.sender]);
+    voted[msg.sender] = true;
+
+    choices[choice].voteCount += 1;
+  }
+
+  // Tally ballots.
+  function tally() timedTransitions atPhase(Phase.Tally) {
+    winner = choices[0];
+    for (uint8 i = 0; i < choices.length; i++) {
+      if (choices[i].voteCount > winner.voteCount)
+        winner = choices[i];
+    }
+  }
+
+  /* Configuration Functions */
+  constructor () {}
+
+  function setVoteStartTime(uint _voteStartTime) atPhase(Phase.Configuration) restrictTo(owner) {
+    voteStartTime = _voteStartTime;
+  }
+
+  function setVoteEndTime(uint _voteEndTime) atPhase(Phase.Configuration) restrictTo(owner) {
+    voteEndTime = _voteEndTime;
+  }
+
+  function addChoices(bytes32[] _choices) atPhase(Phase.Configuration) restrictTo(owner) {
+    for (uint i = 0; i < _choices.length; i++) {
+      choices.push(Choice({
+        name: _choices[i],
+        voteCount: 0
+      }));
+    }
+  }
+
+  function addChoice(bytes32 _name) atPhase(Phase.Configuration) restrictTo(owner) {
+    choices.push(Choice({
+      name: _name,
+      voteCount: 0
+    }));
+  }
+}
+\end{solidity}
+
+% \begin{state}
+%   \begin{public}
+%     \item \sol{AccessControlList choices} maintains the \solt{address} of an ACL
+%       implementation, a \solt{contract} which implements \sol{interface
+%       AccessControlList}.
+%
+%     \item \sol{mapping (bytes4 => uint8) requiredResourcePermissions} maintains a
+%       mapping of \solt{function}[s], \sol{bytes4}, to required
+%       \emph{permission}, \sol{uint8}.
+%   \end{public}
+% \end{state}
+%
+% \begin{code}
+%   \begin{constructor}
+%     \item \sol{constructor (bool _createACL)}, upon creation and initialization
+%       of this \solt{contract} the \solt{constructor} can deploy a
+%       \solt{contract}, \sol{contract BasicACL}, if the \solt{bool}, \sol{bool
+%       _createACL}, is set to \solt{true}.
+%
+%       \begin{parameters}
+%       \item \sol{bool _createACL}, set to \solt{true} to deploy an ACL
+%         implementation, \sol{contract BasicACL}, in addition to this
+%         \solt{contract}; otherwise \solt{false}.
+%       \end{parameters}
+%   \end{constructor}
+%
+%   \begin{functions}
+%     \item \sol{function setAcl (AccessControlList _acl)}, updates the
+%       \solt{contract} reference which is responsible for managing ACL requests.
+%
+%       \begin{modifiers}
+%         \item \sol{modifier restrictTo (owner)}, restricts access to the
+%           \solt{function} such that \emph{only} the current \solt{owner} of the
+%           \sol{contract} can call it.
+%       \end{modifiers}
+%
+%       \begin{parameters}
+%         \item \sol{AccessControlList _acl}, the ACL implementation which access
+%           control responsibilities are to be delegated to.
+%       \end{parameters}
+%
+%       \begin{returns}
+%         \item \sol{bool _success}, resolves to \solt{true} if the operation was
+%           successful, otherwise \solt{false}.
+%       \end{returns}
+%
+%
+%     \item \sol{function setRequiredResourcePermission (bytes4 _resource, uint8 _permission)},
+%       updates the mapping representing the \emph{permission} required to access
+%       some \emph{resource}, \solt{function} signature.
+%
+%       \begin{modifiers}
+%         \item \sol{modifier restrictTo (owner)}, restricts access to the
+%           \solt{function} such that \emph{only} the current \solt{owner} of the
+%           \sol{contract} can call it.
+%       \end{modifiers}
+%
+%       \begin{parameters}
+%         \item \sol{bytes4 _resource}, the \emph{resource}, \solt{function}
+%           signature, which the \emph{permission} is to be modified for.
+%
+%         \item \sol{uint8 _permission}, a \solt{uint8} value representing the
+%           \emph{permission-bit} required for the \emph{resource}.
+%       \end{parameters}
+%
+%       \begin{returns}
+%         \item \sol{bool _success}, resolves to \solt{true} if the operation was
+%           successful, otherwise \solt{false}.
+%       \end{returns}
+%
+%
+%     \item \sol{function canCall (address _subject, bytes4 _resource)}, evaluates
+%       whether a \emph{subject} can access to some \emph{resource} by validating
+%       with the ACL implementation that the \emph{subject} has the required
+%       \emph{resource} \emph{permission}.
+%
+%       \begin{parameters}
+%         \item \sol{address _subject}, the \emph{subject}, Ethereum account,
+%           whose \emph{permissions} are being evaluated.
+%
+%         \item \sol{bytes4 _resource}, the \emph{resource}, \solt{contract
+%           function}, which the \emph{subject's} \emph{permissions} are being
+%           evaluated against.
+%       \end{parameters}
+%
+%       \begin{returns}
+%         \item \sol{bool _canCall}, resolves to \solt{true} if the
+%           \emph{subject}, \sol{address _subject}, is permitted to access the
+%           \emph{resource}, \sol{bytes4 _resource}, otherwise \solt{false}.
+%       \end{returns}
+%
+%
+%     \item
+%       \sol{function hasPermission (address _subject, bytes4 _resource, uint8 _permission)}, \\
+%       \sol{function getPermissions (address _subject, bytes4 _resource)}, \\
+%       \sol{function setPermissions (address _subject, bytes4 _resource, uint256 _permissions)}, \\
+%       \sol{function grantPermission (address _subject, bytes4 _resource, uint8 _permission)}, \\
+%       \sol{function revokePermission (address _subject, bytes4 _resource, uint8 _permission)}, \\
+%       all ACL responsibilities originating from \sol{interface AccessControlList}
+%       are delegated to the provided ACL implementation stored in
+%       \sol{AccessControlList acl}.
+%
+%       \begin{modifiers}
+%         \item \sol{modifier restrictTo (owner)}, restricts access to the
+%           \solt{function} such that \emph{only} the current \solt{owner} of the
+%           \solt{contract} can call this \solt{function}; this applies to
+%           \solt{function}[s] \sol{setPermissions}, \sol{grantPermission}, and
+%         \sol{revokePermission}.
+%       \end{modifiers}
+%   \end{functions}
+% \end{code}

@@ -1,0 +1,237 @@
+\subsubsection{Contract BasicACL}
+
+The \solt{contract}, \sol{contract BasicACL}, implements the ACL
+\solt{interface}, \sol{interface AccessControlList}, to provide a primitive
+ACL implementation. The \solt{contract} implementation is backed by a mapping of
+references, from \emph{subject} to \emph{resource} to \emph{permissions} --- as
+described in Chapter~\ref{chap:methods}, \emph{\nameref{chap:methods}} --- i.e.,
+a nested sparse vector mapping.
+
+\begin{solidity}[contract BasicACL]
+contract BasicACL is Owned, AccessControlList {
+  mapping (address => mapping (bytes4 => uint256)) subjectResourcePermissions;
+
+  function hasPermission (address _subject, bytes4 _resource, uint8 _permission) public constant restrictTo(owner) returns (bool _hasPermission) {
+    uint256 result = subjectResourcePermissions[_subject][_resource] & (uint256(1) << _permission);
+    return (result > 0);
+  }
+
+  function getPermissions (address _subject, bytes4 _resource) public constant restrictTo(owner) returns (uint256 _permissions) {
+    return subjectResourcePermissions[_subject][_resource];
+  }
+
+  function grantPermission (address _subject, bytes4 _resource, uint8 _permission) public restrictTo(owner) returns (bool _success) {
+    subjectResourcePermissions[_subject][_resource] |= uint256(1) << _permission;
+    return true;
+  }
+
+  function revokePermission (address _subject, bytes4 _resource, uint8 _permission) public restrictTo(owner) returns (bool _success) {
+    subjectResourcePermissions[_subject][_resource] &= ~(uint256(1) << _permission);
+    return true;
+  }
+
+  function setPermissions (address _subject, bytes4 _resource, _permissions) public restrictTo(owner) returns (bool _success) {
+    subjectResourcePermissions[_subject][_resource] = _permissions;
+    return true;
+  }
+}
+\end{solidity}
+
+\begin{state}
+  \item \attributes
+
+  \begin{public}
+    \item \sol{mapping (address => mapping (bytes4 => uint256)) subjectResourcePermissions}
+      a nesting mapping used to record the \emph{permissions} which
+      \emph{subjects} have to access various \emph{resources}.
+
+      \begin{displayquote}
+        Here \emph{subjects} are represented and identified by their account
+        \solt{address}; \emph{resources} are assumed to be \solt{function}
+        signatures, \solt{bytes4}; and \emph{permissions} are bit vectors,
+        backed by \solt{uint256} values, where bit masks are leveraged to
+        retrieve individual \emph{permission} values.
+      \end{displayquote}
+  \end{public}
+\end{state}
+
+\begin{code}
+  \item \operations
+
+  \begin{functions}
+    \item \sol{function hasPermission (address _subject, bytes4 _resource, uint8 _permission)},
+      evaluates whether some \emph{subject} has the requisite \emph{permission}
+      to access some \emph{resource}.
+
+      \begin{displayquote}
+        \emph{Permission} evaluation occurs by:
+        \begin{enumerate}
+          \item retrieving the \emph{permissions} bit vector from the
+            \solt{mapping} \sol{subjectResourcePermissions}, where the
+            \emph{subject}, \sol{address _subject}, and \emph{resource},
+            \sol{bytes4 _resource}, are used as keys;
+
+          \item creating a \emph{permission} bit mask by left-shifting 1
+            \sol{_permission} times, \sol{1 << _permission};
+
+          \item evaluating \sol{permissions |$\land$| bit_mask}; and finally,
+
+          \item returning \solt{true} if the value resulting from the evaluation
+            is greater than 0, i.e., the \emph{subject} has \emph{permission} to
+            access to the \emph{resource}.
+        \end{enumerate}
+      \end{displayquote}
+
+      \begin{parameters}
+        \item \sol{address _subject}, the \solt{address} of an account
+          representing the \emph{subject}, i.e., the \emph{user}, to evaluate
+          permissions against.
+        \item \sol{bytes4 _resource}, the \emph{resource}, signature hash of a
+          Solidity \solt{function}, to validate \emph{permissions} against.
+        \item \sol{uint8 _permission}, a \emph{permission} level, or
+          \emph{action}, which is being validated.
+      \end{parameters}
+
+      \begin{returns}
+        \item \sol{bool _hasPermission}, returns the \solt{true} if the
+          \emph{subject} has the requisite \emph{permission} to access the
+          \emph{resource}, otherwise \solt{false}.
+      \end{returns}
+
+    \item \sol{function getPermissions (address _subject, bytes4 _resource)},
+      retrieves the \emph{permissions}, for a \emph{<subject, resource>} pair.
+
+      \begin{parameters}
+        \item \sol{address _subject}, the account \solt{address} of the
+          \emph{subject} whose \emph{permissions} are to be retrieved.
+
+        \item \sol{bytes4 _resource}, the \emph{resource}, \solt{function}
+          signature, which the \emph{permissions} should be retrieved for.
+      \end{parameters}
+
+      \begin{returns}
+      \item \sol{uint256 _permissions}, the \solt{uint256} representation of the
+        \emph{subject's} \emph{permissions} for a given \emph{resource}.
+      \end{returns}
+
+    \item \sol{function setPermissions (address _subject, bytes4 _resource, uint256 _permissions)},
+      updates a \emph{subject's} \emph{permissions} for some \emph{resource}.
+
+      \begin{modifiers}
+        \item \sol{modifier restrictTo (owner)}, restricts access to the
+          \solt{function} such that \emph{only} the current \solt{owner} of the
+          \solt{contract} can call it.
+      \end{modifiers}
+
+      \begin{parameters}
+        \item \sol{address _subject}, the account \solt{address} of the
+          \emph{subject} whose \emph{permissions} are to be modified.
+
+        \item \sol{bytes4 _resource}, the \emph{resource}, \solt{function}
+          signature, which the \emph{permissions} are to be modified for.
+
+        \item \sol{uint256 _permissions}, the \solt{uint256} representation of
+          the \emph{subject's} new \emph{permissions} for the \emph{resource}.
+      \end{parameters}
+
+      \begin{returns}
+        \item \sol{bool _success}, resolves to \solt{true} if the operation was
+          successful, otherwise \solt{false}.
+      \end{returns}
+
+    \item \sol{function grantPermission (address _subject, bytes4 _resource, uint8 _permission)},
+      grants a \emph{subject} \emph{permission} for a given \emph{resource}.
+
+      \begin{displayquote}
+        \emph{Permission} grant occurs by:
+        \begin{enumerate}
+          \item retrieving the \emph{permissions} bit vector from the
+            \solt{mapping} \sol{subjectResourcePermissions}, where the
+            \emph{subject}, \sol{address _subject}, and \emph{resource},
+            \sol{bytes4 _resource}, are used as keys;
+
+          \item creating a \emph{permission} bit mask by left-shifting 1
+            \sol{_permission} times, \sol{1 << _permission};
+
+          \item evaluating \sol{permissions |$\lor$| bit_mask} to produce a new
+            \emph{permissions} bit vector; and finally,
+
+          \item updating the state of the \solt{contract} by storing the
+            resulting \emph{permissions} bit vector back into the
+            \sol{subjectResourcePermissions} \solt{mapping}.
+        \end{enumerate}
+      \end{displayquote}
+
+      \begin{modifiers}
+        \item \sol{modifier restrictTo (owner)}, restricts access to the
+          \solt{function} such that \emph{only} the current \solt{owner} of the
+          \solt{contract} can call it.
+      \end{modifiers}
+
+      \begin{parameters}
+        \item \sol{address _subject}, the account \solt{address} of the
+          \emph{subject} whose \emph{permissions} are to be modified.
+
+        \item \sol{bytes4 _resource}, the \emph{resource}, \solt{function}
+          signature, which the \emph{permissions} are to be modified for.
+
+        \item \sol{uint8 _permission}, a \solt{uint8} value representing the
+          \emph{permission-bit} to enable for the \emph{<subject, resource>}
+          pair.
+      \end{parameters}
+
+      \begin{returns}
+      \item \sol{bool _success}, resolves to \solt{true} if the operation was
+        successful, otherwise \solt{false}.
+      \end{returns}
+
+    \item \sol{function revokePermission (address _subject, bytes4 _resource, uint8 _permission)},
+      revokes a \emph{subject's} \emph{permission} for a given \emph{resource}.
+
+      \begin{displayquote}
+        \emph{Permission} revocation occurs by:
+        \begin{enumerate}
+          \item retrieving the \emph{permissions} bit vector from the
+            \solt{mapping} \sol{subjectResourcePermissions}, where the
+            \emph{subject}, \sol{address _subject}, and \emph{resource},
+            \sol{bytes4 _resource}, are used as keys;
+
+          \item creating a \emph{permission} bit mask by left-shifting 1
+            \sol{_permission} times, \sol{1 << _permission};
+
+          \item flipping all of the bits of the \emph{permission} bit mask,
+            \sol{~bit_mask};
+
+          \item evaluating \sol{permissions |$\land$| bit_mask} to produce a new
+            \emph{permissions} bit vector; and finally,
+
+          \item updating the state of the \solt{contract} by storing the
+            resulting \emph{permissions} bit vector back into the
+            \sol{subjectResourcePermissions} \solt{mapping}.
+        \end{enumerate}
+      \end{displayquote}
+
+      \begin{modifiers}
+        \item \sol{modifier restrictTo (owner)}, restricts access to the
+          \solt{function} such that \emph{only} the current \solt{owner} of the
+          \solt{contract} can call it.
+      \end{modifiers}
+
+      \begin{parameters}
+        \item \sol{address _subject}, the account \solt{address} of the
+          \emph{subject} whose \emph{permissions} are to be modified.
+
+        \item \sol{bytes4 _resource}, the \emph{resource}, \solt{function}
+          signature, which the \emph{permissions} are to be modified for.
+
+        \item \sol{uint8 _permission}, a \solt{uint8} value representing the
+          \emph{permission-bit} to revoke for the \emph{<subject, resource>}
+          pair.
+      \end{parameters}
+
+      \begin{returns}
+      \item \sol{bool _success}, resolves to \solt{true} if the operation was
+        successful, otherwise \solt{false}.
+      \end{returns}
+  \end{functions}
+\end{code}

@@ -1,0 +1,566 @@
+\section{End-to-End Verifiability}\label{sec:e2e-viv}
+The vulnerabilities and weaknesses of electronic voting systems demonstrate a
+clear need for a stronger kind of system design. \emph{End-to-End Verifiable
+(E2E-V)} voting systems are systems which aim to provide such a design by
+providing the following features for voters:
+
+\begin{enumerate}
+  \item allows voters to check that the system recorded their votes correctly
+
+  \item allows voters to check that the system included their votes in the final
+    tally
+
+  \item allows voters to count the recorded votes and double-check the announced
+    outcome of the election.
+\end{enumerate}
+
+% E2E-V voting systems have been a hotbed of research over the past several years.
+An \emph{End-to-End Verifiable Internet Voting (E2E-VIV)} is an E2E-V voting
+system that supports voting over the Internet.
+
+% \begin{displayquote}
+%    Aggressive early adoption of election technology must be tempered by a clear
+%    understanding that voters’ trust in their elections is hard-won and easily
+%    lost.
+% \end{displayquote}
+
+
+\subsection{Requirements}
+In 2015, the U.S. Vote Foundation published a specification and feasibility
+assessment study which laid out requirements for building an end-to-end
+verifiable internet voting system. The study broke these requirements into two
+categories:\cite{e2e-viv}
+
+\begin{itemize}
+  \item \emph{Technical Requirements}, the set of requirements which can be
+    directly addressed by system design and architecture
+
+  \item \emph{Non-Functional Requirements}, the set of requirements which must
+    be imposed on a system by external entities
+\end{itemize}
+
+% cite: The Future of Voting: E2E-VIV
+% This section reviews those requirements.
+
+\subsubsection{Technical Requirements}
+The ten categories of technical requirements, those which should be addressed
+by the design and architecture of the systems itself, are:\cite{e2e-viv}
+
+\begin{enumerate}
+    \item functional requirements
+    \item accessibility requirements
+    \item usability requirements
+    \item security requirements
+    \item authentication requirements
+    \item auditing requirements
+    \item system operational requirements
+    \item reliability requirements
+    \item interoperability requirements
+    \item certification requirements
+\end{enumerate}
+
+% \paragraph{Functional}
+% \begin{displayquote}
+%   The functional requirements of an E2E-VIV system deal primarily with the
+%   casting and recording of ballots and associated voter records.
+% \end{displayquote}
+
+The \emph{functional requirements} deal primarily with casting and recording of
+ballots. \emph{Receipt freedom} is one such functional requirement. An
+electoral system which expresses receipt freedom is said to make it impossible
+for a voter to prove to anyone how they voted.
+%
+% \subparagraph{Receipt freedom} is one such functional requirement, a property
+% where it is impossible for a voter to prove to anybody how they voted.
+%
+Others functional requirements include:
+\begin{itemize}
+    \item ensuring that a voter cast a ballot if such an act is recorded
+    \item data retention in case of failure
+    \item multi-vote functionality to overwrite previous votes
+    \item maintaining voter anonymity
+\end{itemize}
+
+% \paragraph{Usability}
+% \begin{displayquote}
+%   The usability of an E2E-VIV system is critical to its successful adoption and
+%   use.
+% \end{displayquote}
+
+\emph{Usability} is mostly concerned with user experience and confirmation
+guarantees. For example, voters should be confident that their vote was cast by
+being provided a confirmation screen. The voting process should be both
+intuitive and guide the voter through the process. Presentations such as the
+butterfly ballot should be avoided at all costs.
+
+% \paragraph{Accessibility}
+% \blockquote{\emph{Accessibility} is the property of being usable by and
+% useful to voters with disabilities.}
+
+Digital voting systems have the potential to provide wider \emph{accessibility}
+guarantees than traditional paper ballots for voters with disabilities. To
+provide these guarantees developers must involve voters throughout the
+development process to identify accessibility issues and implement solutions.
+
+% \paragraph{Security}
+\emph{Security} is an integral property and requirement which voting systems
+must maintain. Included in this requirement is that:
+
+\begin{itemize}
+    \item no data can be permanently lost
+    \item integrity of voters, candidates, ballot information, cast ballots, and
+      other critical information must be maintained
+    \item accurate timing information is critical for auditing
+    \item voting equipment must be protected
+    \item the system must perform regular health checks
+\end{itemize}
+
+% \paragraph{Authentication}
+\emph{Authentication} is the process of ascertaining the validity of a claimed
+identity. Authentication ensures that the voting system can enforce privacy and
+prevent multi-voting, Sybil attacks, and vote theft. All individuals must be
+identified uniquely. The system must allow access to services only to authorized
+users, e.g., only allow election officials to load ballot info.
+
+% \paragraph{Auditing}
+The property of \emph{auditability} means that a voting system is capable of
+comprehensive examination. Auditability must exist at all stages and levels of
+the voting process. The system must keep auditable logs of all relevant activity
+and the logs must be public and write only. Furthermore, the logs cannot leak
+any data regarding voters or the way any ballot was cast. Privacy must always
+be the foremost concern.
+
+The auditing system must actively report issues and information in
+real-time. At least the following events should be recorded:\cite{e2e-viv}
+\begin{itemize}
+  \item ``all voting-related information, including the number of eligible
+    voters and votes cast, the number of invalid votes, count and recount
+    results, etc.''
+  \item ``any detected attacks on the operation of the system or its
+    communication infrastructure''
+  \item ``any system failures, malfunctions, or other detected threats to proper
+    system operation.''
+\end{itemize}
+%
+% \blockquote[{\cite[67]{}}]{%
+%     \begin{itemize}
+%         \item all voting-related information, including the number of eligible voters and
+%             votes cast, the number of invalid votes, count and recount results, etc.;
+%         \item any detected attacks on the operation of the system or its communication
+%             infrastructure; and
+%         \item any system failures, malfunctions, or other detected threats to proper
+%             system operation.
+%     \end{itemize}
+% }
+%
+The system should provide auditing features which support the ability to:\cite{e2e-viv}
+\begin{itemize}
+  \item ``cross-check and verify the correct operation of the voting system and
+    the accuracy of the election results''
+  \item ``detect voter fraud''
+  \item ``prove that all counted votes are legitimate and that all ballots have
+    been counted''
+\end{itemize}
+%
+% \blockquote[{\cite[67]{}}]{%
+%     \begin{itemize}
+%         \item cross-check and verify the correct operation of the voting system and the
+%             accuracy of the election results;
+%         \item detect voter fraud; and
+%         \item prove that all counted votes are legitimate and that all ballots have been
+%             counted.
+%     \end{itemize}
+% }
+%
+Finally, auditability must extend to the source code, actions performed, and the
+documentation itself.
+
+% \paragraph{System Operational}
+\emph{System operational} requirements are those that enforce and regulate
+transparency, accountability, system configuration, and updates. Logs, software,
+configurations, versions, updates, etc., must all be managed and produced to
+audit for tampering. Protocols should be in place to guard sensitive equipment
+at all times and handle system failures. Officials managing these systems and
+the procedures themselves must be scrutinized closely to prevent insider attacks
+and election fraud.
+
+% \paragraph{Reliability}
+\emph{Reliability} is the property of a system behaving reasonably and as
+expected under both normal conditions and while under attack. During an election
+period a system should be highly available. 99.9\% availability is a minimum for
+voting systems. The system must also be able to recover from any failure within
+10 minutes, with the exception for failure caused by natural disaster or
+malicious attack. The system should have redundant backup systems for critical
+components of the system.
+
+Internet voting systems are compelling targets for Distributed Denial of Service
+(DDoS) attacks, therefore it is important that an E2E-VIV system be hardened to
+such attacks and be able to continue operation with full correctness during a
+sustained DDoS attack.
+
+% \paragraph{Interoperability}
+An E2E-VIV system must use open standards for \emph{interoperability} between
+components, services, and other E2E-VIV systems. Logs and documentation of such
+standards must be published so that anyone can download, inspect, and publish
+analysis and concerns.
+
+% \paragraph{Certification}
+Finally, there should be \emph{certification} and test procedures involved for
+every functional requirement; these tests should be able to be run on demand.
+Formal proofs of security and correctness should be provided wherever possible,
+and third-parties should be hired to conduct an independent review, audit, and
+test of the system.
+
+\subsubsection{Non-functional Requirements}
+The five non-functional requirements defined, those which must be fulfilled by
+external entities, e.g., operators and administrators, are:\cite{e2e-viv}
+
+\begin{enumerate}
+    \item operational requirements
+    \item procedural requirements
+    \item legal requirements
+    \item assurance requirements
+    \item maintenance/evolvability requirements
+\end{enumerate}
+
+% \paragraph{Operational}
+The specification describes several \emph{operational} requirements: election
+and registration timing, maintaining voter registration and candidate
+nomination lists, providing receipt freedom, voter assistance, election
+integrity, and openness.
+
+% \subparagraph{Voter Assistance}
+Voters must be well-informed on how to register, vote, and protect their privacy
+in the voting system.
+% \subparagraph{Election and Registration Timing}
+Clear instruction on when voting and registration occurs should be announced far
+in advance for the voter's benefit. When multiple forms of remote voting take
+place, votes cast over the Internet should not be accepted after other forms of
+remote voting end.
+% \subparagraph{Voter Registration}
+E2E-VIV systems must publish a voter register that is regularly updated. Voters
+should be able to check that information in the register is accurate and request
+corrections.
+% \subparagraph{Candidate Nomination Lists}
+The ballot presented to voters must be consistent, fair, unbiased, and free from
+any superfluous information about candidates/choices.
+
+% \subparagraph{Receipt Freedom}
+Operational receipt freedom represents two different requirements depending on
+whether a voter is voting from a supervised or unsupervised location. In a
+supervised location receipt freedom requires that the voting terminal clear all
+indication of how a ballot was cast and ensure that no paper trail representing
+how the ballot was cast is able to leave the polling place (except by official
+means). In an unsupervised location any visual proof of vote should not be able
+to be used to determine how a vote was cast or will be tallied.
+
+% \subparagraph{Election Integrity}
+If test ballots are capable of being submitted then those ballots must be
+clearly marked as a test ballot with instruction on how to cast a real ballot.
+The voting system should not disclose any results to any person until after the
+voting period has ended, including alternative forms of voting. Tallying should
+be done as soon as possible afterwards and the tallying process should be
+transparent, recorded, and be able to be replayed. Any irregularities which
+affect the integrity of votes should be recorded.
+
+% \subparagraph{Openness}
+An E2E-VIV system must be open and function properly regardless of the hardware
+or software being used to run the voting software. The system must be available
+for auditing by external actors, especially when considering components which
+are expected to be run on external systems or voter's machines.
+
+% \paragraph{Procedural}
+\emph{Procedural} requirements define the processes required to deploy and run
+the E2E-VIV system.
+
+\begin{itemize}
+  \item Procedures should be published regarding provisioning, certification,
+    maintenance, availability, and use. For example, when updates occur,
+    election officials must call upon an independent body to perform
+    verifications of performance and certification of intent.
+
+  \item Procedures should be in place to teach voters the voting process.
+
+  \item Election officials should have maintenance and security procedures to
+    ensure that voting equipment is operating nominally and has not been
+    tampered with. For example, conducting sensitive operations should require
+    teams of at least two people.
+
+  \item As much as possible there should be procedures in place to allow
+    observers to watch election procedures.
+
+  \item Procedures should be in place to update results in the event that a
+    voter proves that their vote was not accurately received or counted.
+\end{itemize}
+
+% \paragraph{Legal}
+The \emph{legal} requirements include national, state, and local laws that apply
+to voting systems, e.g., accessibility, anonymity, and availability guarantees.
+Any deployed E2E-VIV system must comply with these laws. For example, election
+officials must ensure that only one ballot by each voter is tallied when
+multiple means of voting exist, e.g., remote and traditional polling place.
+%
+% Voters must be able to restart, discard, or alter their votes at any point
+% during the voting process. The system must allow the voter to participate in an
+% election without marking choices, i.e., casting blank or partially blank
+% ballots. The voting system must always preserve anonymity and indicate clearly
+% that the voters ballot has been cast and voting procedure completed.
+%
+\begin{displayquote}
+  ``There must be no impediments to interested parties who want to study the
+  E2E-VIV system. In particular, no nondisclosure agreement or contract of any
+  kind may be required for download and study of, or for building, testing and
+  publishing test results for, the E2E-VIV system.''\cite{e2e-viv}
+\end{displayquote}
+% \blockquote{There must be no impediments to interested parties who want to study
+% the E2E-VIV system. In particular, no nondisclosure agreement or contract of any
+% kind may be required for download and study of, or for building, testing and
+% publishing test results for, the E2E-VIV system.}
+
+% \paragraph{Assurance}
+To meet \emph{assurance} requirements, client-side software must be functional
+and free of bugs across a wide range of hardware and software stack
+combinations. There must be strong security with respect to authentication such
+that voter credentials cannot be forged or invalidated without breaking
+underlying cryptographic protocols.
+
+The entirety of the voting system --- e.g., software, documentation, design,
+architecture, algorithms, build scripts, issue tracking system, etc. --- must be
+free, open, and public. All available resources should be up to date, certified,
+and released under license that permits anyone to download, build, test, or
+modify the source.
+
+% \paragraph{Maintenance and Evolvability}
+To meet \emph{maintenance and evolvability requirements} election officials must
+have the right and ability to update the election system to conform to law,
+technology, or threat independent of the original vendor.
+
+\subsection{Architecture}
+% \todo{Improve the Architecture content.}
+The study, ``The Future of Voting: End-to-End Verifiable Internet Voting,''
+provides an architectural feature model, seen in Figure~\ref{fig:viv-model},
+which defines over 127,000 possible architectural variants.\cite{e2e-viv}
+
+\begin{figure}[H]
+  \setstretch{1}
+  \begin{Verbatim}[
+    label={[Architectural Feature Model]Architectural Feature Model},
+    tabsize=2,
+    fontsize=\scriptsize,
+    frame=lines,
+    framesep=5mm,
+    numbers=left,
+    fillcolor=\color{yellow}
+  ]
+  -- This diagram shows the various dimensions of an E2EVIV architecture
+  static_diagram E2EVIV_Architecture_Dimensions
+  component
+    class E2EVIV_ARCHITECTURE
+    feature
+      authority_distribution: SET[VALUE]
+        ensure 0 < Result.count;
+          for_all v: VALUE such_that v member_of Result
+            it_holds v member_of { Centralized, Distributed };
+        end
+      crypto_protocols: SET[VALUE]
+        ensure 0 < Result.count;
+          for_all v: VALUE such_that v member_of Result
+            it_holds v member_of { On_Paper, Mechanized, Verified, Generated };
+        end
+      correctness_evidence: SET[VALUE]
+        ensure 0 < Result.count;
+          for_all v: VALUE such_that v member_of Result
+          it_holds v member_of { Process_Based, Assertions };
+        end
+      implementation_type: SET[VALUE]
+        ensure 0 < Result.count;
+          for_all v: VALUE such_that v member_of Result
+            it_holds v member_of { Golden_Implementation, Open_Protocols_and_Specs };
+        end
+      key_distribution_method: SET[VALUE]
+        ensure 0 < Result.count;
+          for_all v: VALUE such_that v member_of Result
+            it_holds v member_of { Public_Ceremony, Threshold_Cryptography, PKI, Web_of_Trust };
+        end
+      deployment_style: SET[VALUE]
+        ensure 0 < Result.count;
+          for_all v: VALUE such_that v member_of Result
+            it_holds v member_of { Trusted_Servers, Public_Cloud, Peer_to_Peer };
+        end
+      client_technology: SET[VALUE]
+        ensure 0 < Result.count;
+          for_all v: VALUE such_that v member_of Result
+            it_holds v member_of { Custom_App, Web_Based };
+        end
+    end
+  end
+  \end{Verbatim}
+  \caption{A specification of the possible variants for an E2E-VIV system.\cite{e2e-viv}}\label{fig:viv-model}
+\end{figure}
+
+Most of the variability available when constructing an E2E-VIV system stems from
+the cryptographic techniques and tools available to select from when designing
+the system.
+
+\subsubsection{Cryptographic Techniques and Tools}
+The cryptographic techniques and cryptosystems available for use in E2E-V
+electoral systems are presented in this section; this is not a comprehensive
+list of cryptographic techniques and tools available, but includes some of the
+most common techniques and tools leveraged in E2E-VIV systems.
+
+% \paragraph{Asymmetric Cryptography}
+Asymmetric cryptography, also known as public-key cryptography, uses pairs of
+keys to securely encrypt and decrypt messages. There are many different
+public-key based cryptosystems available for use.
+
+% \paragraph{Homomorphic Schemes}
+Homomorphic cryptographic schemes allow one to perform basic arithmetic
+operations on ciphertexts without requiring decryption of the ciphertext. This
+property has a number of uses in E2E-VIV systems; for example, an E2E-VIV system
+might leverage this property to tally a collection of encrypted ballots without
+decrypting any individual's ballots.
+
+% \subparagraph{Additive Homomorphic Encryption}
+Additive homomorphic encryption schemes enable processing of ciphertexts by way
+of addition. The Pallier and Benaloh cryptosystems both support additive
+homomorphic encryption.\cite{helios}
+
+% \subparagraph{Multiplicative Homomorphic Encryption}
+Multiplicative homomorphic encryption schemes enable processing ciphertexts by
+way of multiplication. The ElGamal cryptosystem supports multiplicative
+homomorphic encryption.
+
+% \paragraph{Append-Only Public Bulletin Board}
+Most E2E-VIV systems depend on an append-only web/public bulletin
+board.\cite{bulletin-board} The append-only public bulletin board is a
+publicly-visible secure location where election operations and ballot data are
+submitted, logged, and made available to support auditing
+requirements.\cite{e2e-viv,helios,almost-correct-mixing,pretty-good-democracy,mix-networks,vector-ballot-voting}
+Blockchains fulfill most of the requirements of an append-only public bulletin
+board.
+
+% \subsubsection{Secret Sharing and Threshold Schemes}
+Secret sharing and threshold schemes allow a collection of actors to cooperate
+to produce ``shares'' of a secret; each participant is responsible for
+managing their share of the secret and some threshold of shares must come
+together to recover the complete secret or perform cryptographic
+operations.\cite{distributed-key-generation,large-scale-distributed-key-generation}
+
+% \paragraph{Zero-Knowledge Proofs}
+A zero-knowledge proof (ZKP) is a probabilistic method which allows one party
+to prove knowledge of some secret without revealing any information about the
+secret itself. A zero-knowledge proof satisfies the following properties:\cite{e2e-viv,zkproof}
+%
+\begin{enumerate}
+  \item Completeness, an honest verifier will be convinced by an honest prover.
+  \item Soundness, an honest verifier will not be convinced by a dishonest
+    prover.
+  \item Zero-knowledge, the verifier will not learn any information regarding
+    the secret itself.
+\end{enumerate}
+%
+% \subparagraph{Non-Interactive Zero-Knowledge Proofs}
+A useful form of zero-knowledge proofs are non-interactive zero-knowledge
+proofs --- also known as NIZKs, zk-SNARKs, or zkSTARKs --- which are
+zero-knowledge proofs which require no interaction between the prover and
+verifier for the verifier to be convinced of
+correctness.\cite{helios,almost-correct-mixing,vector-ballot-voting,mix-networks}
+
+% \paragraph{Mixnet Schemes}
+Mixnet schemes are used to provide anonymity. Mix networks are operated by a
+set of trusted nodes, mix-servers, which consume messages --- typically
+encrypted ballot data in the case of E2E-VIV systems --- from a set of
+network-participants to produce a random permutation of the input messages.
+Each node performs a ``mix'' operation on the incoming messages in such a way
+that the output cannot be unscrambled and tied back to a network-participant
+except by the node itself which is performing the mixing operation. Therefore,
+as long as any single mix-server in the mix network is acting honestly, the
+anonymity of the participants will be
+maintained.\cite{mix-networks,vector-ballot-voting}
+
+% \subparagraph{Decryption Mixnet}
+A decryption mixnet operates by encrypting a message in multiple layers with
+each mix server's public key. To decrypt the message, the message layers are
+decrypted in the opposite order they were encrypted in by each node. Each node
+forwards its decrypted results to the next node in the mix network. So long as a
+single node does not reveal the source of the message then the message will
+become untraceable (assuming no information is leaked by the message
+itself).\cite{mix-networks}
+
+% \subparagraph{Re-encryption Mixnet}
+A re-encryption mixnet works by leveraging the re-encryption properties of the
+underlying encryption scheme. Certain cryptosystems make it possible to change a
+ciphertext without modifying the underlying message. In this way a set of nodes
+can shuffle and re-encrypt a ciphertext then pass them to the next mixnet node
+to repeat the process. So long as a single node does not reveal the shuffling
+process the anonymity offered by the mixnet will be
+maintained.\cite{mix-networks,almost-correct-mixing}
+
+% \paragraph{Blind Signature Schemes}
+Blind signature schemes separate the voter authentication, authorization, and
+signing components from the vote tallying, shuffling, and decryption components.
+A voter will encrypt a ballot (blind it) then send it to a signing authority who
+will blind-sign the encrypted ballot after it has verified that the voter is
+qualified to vote. Once a voter has acquired a blind signed ballot they can
+strip their identifying data, unblind the ballot, and submit the signed ballot
+through an anonymous channel. The underlying cryptosystem makes it such that the
+blind signed ballot is equivalent to a signed unblinded ballot.\cite{e2e-viv}
+
+% cite
+
+% \paragraph{ElGamal}
+% The ElGamal cryptosystem is a
+%
+% \paragraph{Paillier}
+
+% \subsection{Existing Systems}
+% \todo{Complete section.}
+% \todo{Do not directly discuss any systems which are strictly physical.}
+
+% \subsubsection{Estonia}
+% Estonia began using Internet voting in 2005. By the 2015 Estonian parliamentary
+% elections 30.5\% of all voters voted over the Internet. Estonia maintains what
+% are probably the most advanced national identification cards in the world.
+% Estonian IDs are part of a \emph{Public Key Infrastructure (PKI)} where IDs
+% serve as smart cards which possess two RSA key pairs: one for signing and one
+% for authentication. Cryptographic functions are performed on the card. The
+% signatures produced by the IDs are used extensively throughout the country and
+% are legally binding. These cryptographic IDs allow Estonia to provide voter
+% authentication capabilities that cannot be reproduced in the US.\ Despite the
+% advanced authentication capabilities that Estonia offers researchers in 2014
+% devised a number of attacks that could be performed on the Estonian voting
+% system to spoil ballots, damage ballot secrecy, and steal/drop votes. The
+% researchers also criticized the transparency and operational security of the
+% system.
+
+% \subsubsection{Helios}
+% \todo{Review Ben Adidas' Helios system.}
+
+% \subsubsection{RIES}
+% \todo{Complete section.}
+
+% \subsubsection{Pret A Voter}
+% \todo{Special characters/spelling in pret a voter.}
+
+% \subsubsection{Punchscan}
+% \todo{Complete section.}
+%
+% \subsubsection{Scantegrity II}
+% \todo{Complete section.}
+
+% \subsubsection{Remotegrity}
+% \todo{Complete section.}
+
+% \subsubsection{Norwegian System}
+% \todo{Complete section.}
+
+% \subsubsection{Wombat}
+% \todo{Review Wombat.}
+% \todo{Complete section.}
+
+% \subsubsection{Demos}
+% \todo{Complete section.}
+% \todo{Review Demos.}
+
+% \subsubsection{vVote}
+% \todo{Complete section.}

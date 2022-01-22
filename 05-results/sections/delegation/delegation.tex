@@ -1,0 +1,45 @@
+\subsection{Delegation Contracts}
+
+\begin{solidity}[Vote Delegation]
+mapping (address => Voter) voters;
+
+function delegateVote (address delegate) public auth returns (bool _success) {
+  // The `auth` modifier prevents this function from being
+  // called until the Authority has confirmed that the
+  // the message sender has the proper privileges.
+  Voter cursor;
+  uint40 weight = voters[msg.sender].weight;
+
+  // Cycle Detection
+  mapping (address => bool) visited;
+  visited[msg.sender] = true;
+  visited[delegate] = true;
+
+  cursor = voters[delegate];
+  while (cursor.delegate) {
+    address newDelegate = cursor.delegate;
+    if (visited[newDelegate]) return false;
+    cursor = voters[newDelegate];
+    visited[newDelegate] = true;
+  }
+
+  // Decrement weights of old delegate chain.
+  cursor = voters[msg.sender];
+  while (cursor.delegate) {
+    address newDelegate = cursor.delegate;
+    cursor = voters[newDelegate];
+    cursor.weight -= weight;
+  }
+
+  // Increment weights of new delegate chain.
+  cursor = voters[msg.sender];
+  cursor.delegate = delegate;
+  while (cursor.delegate) {
+    address newDelegate = cursor.delegate;
+    cursor = voters[newDelegate];
+    cursor.weight += weight;
+  }
+
+  return true;
+}
+\end{solidity}

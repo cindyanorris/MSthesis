@@ -1,0 +1,167 @@
+\subsubsection{Contract ACLAuthority}
+
+The \solt{contract}, \sol{contract ACLAuthority}, merges the ACL functionality
+introduced by \sol{interface AccessControlList} with the generalized access
+control functionality introduced by \sol{interface Authority}.
+
+\begin{solidity}[contract ACLAuthority]
+contract ACLAuthority is Owned, Authority, AccessControlList {
+  AccessControlList acl;
+  mapping (bytes4 => uint8) requiredResourcePermission;
+
+  constructor (bool _createACL) {
+    if (_createACL) acl = new BasicACL();
+  }
+
+  function hasPermission (address _subject, bytes4 _resource, uint8 _permission) public constant returns (bool _hasPermission) {
+    return acl.hasPermission(_subject, _resource, _permission);
+  }
+
+  function getPermissions (address _subject, bytes4 _resource) public constant returns (uint256 _permissions) {
+    return acl.getPermissions(_subject, _resource);
+  }
+
+  function grantPermission (address _subject, bytes4 _resource, uint8 _permission) public restrictTo(owner) returns (bool _success) {
+    return acl.grantPermission(_subject, _resource, _permission);
+  }
+
+  function revokePermission (address _subject, bytes4 _resource, uint8 _permission) public restrictTo(owner) returns (bool _success) {
+    return acl.removePermission(_subject, _resource, _permission);
+  }
+
+  function setPermissions (address _subject, bytes4 _resource, uint256 _permissions) public restrictTo(owner) returns (bool _success) {
+    return acl.setPermissions(_subject, _resource, _permissions);
+  }
+
+  function setACL(AccessControlList _acl) public restrictTo(owner) returns (bool _success) {
+    assert(_acl.owner() == address(this));
+    acl = _acl;
+    return true;
+  }
+
+  function setRequiredResourcePermission (bytes4 _resource, uint8 _permission) public restrictTo(owner) returns (bool _success) {
+    requiredResourcePermission[_resource] = _permission;
+    return true;
+  }
+
+  function canCall (address _subject, bytes4 _resource) public constant returns (bool _canCall) {
+    return hasPermission(_subject, _resource, requiredResourcePermission[_sig]);
+  }
+}
+\end{solidity}
+
+\begin{state}
+  \item \attributes
+
+  \begin{public}
+    \item \sol{AccessControlList acl} maintains the \solt{address} of an ACL
+      implementation, a \solt{contract} which implements \sol{interface
+      AccessControlList}.
+
+    \item \sol{mapping (bytes4 => uint8) requiredResourcePermissions} maintains a
+      mapping of \solt{function}[s], \sol{bytes4}, to required
+      \emph{permission}, \sol{uint8}.
+  \end{public}
+\end{state}
+
+\begin{code}
+  \item \operations
+
+  \begin{constructor}
+    \item \sol{constructor (bool _createACL)}, upon creation and initialization
+      of this \solt{contract} the \solt{constructor} can deploy a
+      \solt{contract}, \sol{contract BasicACL}, if the \solt{bool}, \sol{bool
+      _createACL}, is set to \solt{true}.
+
+      \begin{parameters}
+      \item \sol{bool _createACL}, set to \solt{true} to deploy an ACL
+        implementation, \sol{contract BasicACL}, in addition to this
+        \solt{contract}; otherwise \solt{false}.
+      \end{parameters}
+  \end{constructor}
+
+  \begin{functions}
+    \item \sol{function setAcl (AccessControlList _acl)}, updates the
+      \solt{contract} reference which is responsible for managing ACL requests.
+
+      \begin{modifiers}
+        \item \sol{modifier restrictTo (owner)}, restricts access to the
+          \solt{function} such that \emph{only} the current \solt{owner} of the
+          \sol{contract} can call it.
+      \end{modifiers}
+
+      \begin{parameters}
+        \item \sol{AccessControlList _acl}, the ACL implementation which access
+          control responsibilities are to be delegated to.
+      \end{parameters}
+
+      \begin{returns}
+        \item \sol{bool _success}, resolves to \solt{true} if the operation was
+          successful, otherwise \solt{false}.
+      \end{returns}
+
+
+    \item \sol{function setRequiredResourcePermission (bytes4 _resource, uint8 _permission)},
+      updates the mapping representing the \emph{permission} required to access
+      some \emph{resource}, \solt{function} signature.
+
+      \begin{modifiers}
+        \item \sol{modifier restrictTo (owner)}, restricts access to the
+          \solt{function} such that \emph{only} the current \solt{owner} of the
+          \sol{contract} can call it.
+      \end{modifiers}
+
+      \begin{parameters}
+        \item \sol{bytes4 _resource}, the \emph{resource}, \solt{function}
+          signature, which the \emph{permission} is to be modified for.
+
+        \item \sol{uint8 _permission}, a \solt{uint8} value representing the
+          \emph{permission-bit} required for the \emph{resource}.
+      \end{parameters}
+
+      \begin{returns}
+        \item \sol{bool _success}, resolves to \solt{true} if the operation was
+          successful, otherwise \solt{false}.
+      \end{returns}
+
+
+    \item \sol{function canCall (address _subject, bytes4 _resource)}, evaluates
+      whether a \emph{subject} can access to some \emph{resource} by validating
+      with the ACL implementation that the \emph{subject} has the required
+      \emph{resource} \emph{permission}.
+
+      \begin{parameters}
+        \item \sol{address _subject}, the \emph{subject}, Ethereum account,
+          whose \emph{permissions} are being evaluated.
+
+        \item \sol{bytes4 _resource}, the \emph{resource}, \solt{contract
+          function}, which the \emph{subject's} \emph{permissions} are being
+          evaluated against.
+      \end{parameters}
+
+      \begin{returns}
+        \item \sol{bool _canCall}, resolves to \solt{true} if the
+          \emph{subject}, \sol{address _subject}, is permitted to access the
+          \emph{resource}, \sol{bytes4 _resource}, otherwise \solt{false}.
+      \end{returns}
+
+
+    \item
+      \sol{function hasPermission (address _subject, bytes4 _resource, uint8 _permission)}, \\
+      \sol{function getPermissions (address _subject, bytes4 _resource)}, \\
+      \sol{function setPermissions (address _subject, bytes4 _resource, uint256 _permissions)}, \\
+      \sol{function grantPermission (address _subject, bytes4 _resource, uint8 _permission)}, \\
+      \sol{function revokePermission (address _subject, bytes4 _resource, uint8 _permission)}, \\
+      all ACL responsibilities originating from \sol{interface AccessControlList}
+      are delegated to the provided ACL implementation stored in
+      \sol{AccessControlList acl}.
+
+      \begin{modifiers}
+        \item \sol{modifier restrictTo (owner)}, restricts access to the
+          \solt{function} such that \emph{only} the current \solt{owner} of the
+          \solt{contract} can call this \solt{function}; this applies to
+          \solt{function}[s] \sol{setPermissions}, \sol{grantPermission}, and
+        \sol{revokePermission}.
+      \end{modifiers}
+  \end{functions}
+\end{code}

@@ -1,0 +1,65 @@
+\subsubsection{Interface Registry}
+
+The \solt{interface}, \sol{interface Registry}, introduces three \solt{function}
+definitions required to achieve basic registry functionality:
+
+\begin{enumerate}
+  \item \sol{function register}, which \emph{registers} a \emph{subject}.
+
+  \item \sol{function unregister}, which \emph{unregisters} a \emph{subject}.
+
+  \item \sol{function isRegistered}, which evaluates whether a \emph{subject} is
+    \emph{registered}.
+\end{enumerate}
+
+\begin{solidity}[interface Registry]
+interface Registry {
+  function register (address _subject) public returns (bool _success);
+  function unregister (address _subject) public returns (bool _success);
+  function isRegistered (address _subject) public constant returns (bool _isRegistered);
+}
+\end{solidity}
+
+\begin{interface}
+  \begin{functions}
+    \item \sol{function isRegistered (address _subject)}, evaluates whether some
+      \emph{subject} is \emph{registered}.
+
+      \begin{parameters}
+        \item \sol{address _subject}, the \solt{address} of an account
+          representing the \emph{subject}, to evaluate the \emph{registration}
+          of.
+      \end{parameters}
+
+      \begin{returns}
+        \item \sol{bool _isRegistered}, returns the \solt{true} if the
+          \emph{subject} is \emph{registered}, otherwise \solt{false}.
+      \end{returns}
+
+    \item \sol{function unregister (address _subject)}, \emph{unregisters} a
+      \emph{subject}.
+
+      \begin{parameters}
+        \item \sol{address _subject}, the account \solt{address} of the
+          \emph{subject} who is to be \emph{unregistered}.
+      \end{parameters}
+
+      \begin{returns}
+        \item \sol{bool _success}, resolves to \solt{true} if the operation was
+          successful, otherwise \solt{false}.
+      \end{returns}
+
+    \item \sol{function register (address _subject)}, \emph{registers} a
+      \emph{subject}.
+
+      \begin{parameters}
+        \item \sol{address _subject}, the account \solt{address} of the
+          \emph{subject} who is to be \emph{registered}.
+      \end{parameters}
+
+      \begin{returns}
+        \item \sol{bool _success}, resolves to \solt{true} if the operation was
+          successful, otherwise \solt{false}.
+      \end{returns}
+  \end{functions}
+\end{interface}

@@ -1,0 +1,212 @@
+\subsection{Election Components}
+The election components are responsible for constructing and operating election
+processes. These responsibilities include maintaining the integrity and security
+of the election, handling votes, tallying ballots, and determining election
+winners.
+
+The phases typically involved in conducting an Internet-based election,
+described in Section~\ref{sec:internet-voting}, are: Setup, Distribution,
+Voting, Casting, Tallying, and Auditing. Responsibilities pertaining to voter
+registration, which are typically handled in the Setup phase, are expected to be
+managed by Authorization components. The Distribution phase, which mostly
+pertains to processes such as mailing election materials to voters, is
+considered outside the scope of this research and therefore ignored. The
+Auditing phase, where election integrity and results are scrutinized, is assumed
+to be handled and provided by the underlying features made available by
+Ethereum.
+
+% Ideally the ballots would be recorded separately from the tallying method. If
+% they were we could apply different tallying methods to the same set of ballots
+% and produce different results. Unfortunately it's extremely costly to store
+% ballots as part of the contract state.
+
+% We opt for first-past-the-post and range vote for single-winner elections, the
+% former for its simplicity and ubiquity, the latter for its effectiveness. This
+% provides an implementation of a plurality voting system and majority voting
+% system.
+
+\subsubsection{Design}
+Each electoral system implementation is unique, due mostly to the unique
+requirements necessitated by their underlying tallying algorithms and ballot
+structures.
+
+There are important electoral criteria worth considering when analyzing the
+implementation feasibility of these electoral systems, namely, the ballot
+counting criteria: summability, polynomial time, and resolvable. These electoral
+criteria are significant because they impact the gas costs associated with
+operating the electoral system. Table~\ref{tab:criteria-compliance} is a useful
+resource when considering these electoral criteria. Both the first-past-the-post
+and range vote electoral systems are a 1\textsuperscript{st}-order summable;
+i.e., ballots can be tallied using a linear amount of space with respect to the
+number of choices available without losing information required to complete the
+tallying processes. Both also have polytime ballot counting implementations that
+are linear in the number of candidates and voters. STV is not listed in the
+table; however, its single-winner equivalent (IRV) is; which implies that STV
+has, at best, a tallying complexity of $O(n^2)$ and a summability complexity
+of $O(n!)$ with respect to the number candidates.
+
+Gas costs must be considered when implementing, deploying, and running contract
+functions on the Ethereum Virtual Machine (EVM). If gas costs are too high then
+it may become infeasible for an external account to afford to execute a contract
+function, e.g., the network fees become too high to vote. Another concern to
+consider is that the cost to execute a contract function may become too high to
+ever complete in a single block, therefore never actually complete. The most
+expensive operations, by no small margin, are operations involving storage.
+Therefore it is important to minimize storage usage.
+
+% Fortunately these EVM limitations map well
+% to many voting method criteria. We can lean on these criteria and the field of
+% computational social choice theory broadly to restrict the set of voting systems
+% to just the ones that can be feasibly implemented on the Ethereum blockchain.
+
+\paragraph{Finite State Machine}
+Several of the voting system designs use a phased approach with timed
+transitions between election states: Configuration, Frozen, Vote, and Tally.
+These phases can be modeled as a finite state machine where calls to various
+functions trigger transitions to different stages. A modifier function can be
+used to restrict access of functions to only be callable during their
+appropriate state. Most of the transitions from state to state can be designed
+as timed transitions which occur lazily, i.e., the check to confirm that it is
+time to transition from one state to another occurs when a function is called.
+The rationale for this approach is due to the fact that Ethereum offers no
+mechanism to trigger code execution \emph{from within the blockchain itself};
+therefore all function calls, even if called from another function or even a
+function in a different contract, must ultimately have originated from a
+transaction created by an externally owned account. The product of this timed
+transition implementation implies that the state restriction modifier needs to
+occur after the lazily evaluated timed transition modifier; i.e., first update
+the current state if it should be, then validate if the function should
+executed. On the other hand, if transitions are manually updated during a
+function's execution then the opposite behavior should occur; i.e., first
+validate if the function should be run, then update the state as required.
+
+\subparagraph{Configuration}
+The Configuration phase, as implied by the name, exists to provide election
+administrators an opportunity to configure the election contract: choices,
+election start/end time, etc. After the configuration is complete the
+administrators can freeze the contract, preventing it from being modified
+further.
+
+\subparagraph{Frozen}
+Transitioning to the Frozen phase could simply set a boolean \sol{frozen} to
+true and update the phase to Frozen. The boolean \sol{frozen} should be checked
+at the start of every administrative function's execution and should cause the
+immediate cease of code execution if the value is true. This serves to prevent
+potentially malicious election administrators from modifying an election
+contract after the voting process has started; it also serves to notify external
+contracts and users that the election is configured and is ready or waiting to
+move into the Vote phase.
+
+\subparagraph{Vote}
+The Vote phase is the phase during which various kinds of voting can occur for a
+particular election contest. A \sol{vote} function should be defined. For
+flexibility, a \sol{vote (uint8[], uint8[])} function signature is considered
+which is capable of being leveraged by most kinds of electoral systems and
+ballot structures. For example, as a sparse vector, where both arrays are of
+equal length; values in the first array act as a choice index and values from
+the second array act as a choice value. This could be used to marginally reduce
+the size of transactions for many kinds electoral systems.
+
+\subparagraph{Tally}
+The Tally phase is the final phase of the election process that takes place
+after the end of the Voting phase. The exact tallying process will depend on the
+electoral system itself.
+
+
+\paragraph{First-Past-the-Post}
+The process for a first-past-the-post election is as follows:
+
+\begin{enumerate}
+  \item Configuration
+  \begin{enumerate}
+    \item Election administrators add each contest choice: \\
+      \sol{addChoice(bytes32 _choice)}.
+    \item Election administrators set the voting start time: \\
+      \sol{setVoteStartTime(uint _voteStartTime)}.
+    \item Election administrators set the voting end time: \\
+      \sol{setVoteEndTime(uint _voteStartTime)}.
+    \item Election administrators freeze the electoral contract, preventing
+      further contract configuration mutations: \sol{freeze()}.
+  \end{enumerate}
+
+  \item Frozen
+  \begin{enumerate}
+    \item All functions are disabled until start time is met.
+  \end{enumerate}
+
+  \item Vote
+  \begin{enumerate}
+    \item Authorized voters cast votes by calling the \sol{vote(uint8 _choice)}
+      function, where the value provided is the choice the voter supports.
+      Votes are immediately summed into the struct of the appropriate choice.
+      This is feasible because the first-past-the-post electoral system is
+      summable in linear time and with linear space consumption.
+  \end{enumerate}
+
+  \item Tally
+  \begin{enumerate}
+    \item When the voting end time is reached the election moves into the
+      Tally phase. At this point only the tally function can be called.
+      The tally function, in this case, will check the number of votes for
+      each candidate and set the winner to the choice that has received
+      the most support. The election administrator is expected to run this
+      contract function but any account can execute this function without
+      any consequence to the result of the contract.
+  \end{enumerate}
+\end{enumerate}
+
+\paragraph{Range Voting}
+The process for a range vote is very similar to the process for
+first-past-the-post. It is as follows:
+
+\begin{enumerate}
+  \item Configuration
+  \begin{enumerate}
+    \item Election administrators add each contest choice: \\
+      \sol{addChoice(bytes32 _choice)}.
+    \item Election administrators set the voting start time: \\
+      \sol{setVoteStartTime(uint _voteStartTime)}.
+    \item Election administrators set the voting end time: \\
+      \sol{setVoteEndTime(uint _voteStartTime)}.
+    \item Election administrators set the max score (<=100) a choice can
+      receive: \\
+      \sol{setMaxScore(uint8 _maxScore)}.
+    \item Election administrators freeze the electoral contract, preventing
+      further contract configuration mutations: \sol{freeze()}.
+  \end{enumerate}
+
+  \item Frozen
+  \begin{enumerate}
+    \item All functions are disabled until start time is met.
+  \end{enumerate}
+
+  \item Vote
+  \begin{enumerate}
+    \item Authorized voters cast votes by calling the \sol{vote(uint8[] _choices, uint8[] _scores)}
+      function. The parameters act as a sparse vector where the value
+      provided in \sol{_choice} indicates the choice being scored
+      and the corresponding value provided in \sol{_scores}
+      indicates the score of the choice. Scores are immediately summed
+      into the struct of of the appropriate choice and a
+      \sol{voteCount} member is incremented. This is feasible
+      because the range vote electoral system is summable in linear time
+      and with linear space consumption.
+  \end{enumerate}
+
+  \item Tally
+  \begin{enumerate}
+    \item When the voting end time is reached the election moves into the
+      Tally phase. At this point only the tally function can be called.
+      The tally function for this electoral system will, for each choice,
+      multiply the summed score by $10^p$ where $p$ is
+      \sol{precision} then divide the result by
+      \sol{voteCount} to find an average score for the choice. The
+      winner is set to the choice with the highest average score. The
+      score is multiplied by $10^p$ because the EVM does not have floating
+      point functionality and a greater precision makes ties less likely.
+      The election administrator is expected to run this contract function
+      but any account can execute this function without any consequence to
+      the result of the contract.
+  \end{enumerate}
+\end{enumerate}
+

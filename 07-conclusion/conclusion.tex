@@ -1,0 +1,116 @@
+\chapter{Conclusion}\label{chap:conclusion}
+
+The issues faced by governments and societies --- especially while wrestling
+with issues such as the COVID-19 pandemic, state-sponsored election
+interference, and claims of election fraud --- demonstrate a clear need for
+improvements with regards to electoral systems, voting systems, and governance
+models. The concept of decentralized organizations, democratically operating and
+existing on-chain, offers a provocative and alluring alternative approach which
+might have the potential to support more egalitarian and meritocratic social
+structures and governance models. Section~\ref{sec:elections} introduced
+elections, electoral systems, and the tools available for analyzing them.
+Section~\ref{sec:blockchain-technologies} introduced blockchain technologies,
+their design, and the properties thereof which might prove useful in a number of
+systems, such as voting, where a high degree of verifiability and confidence of
+correctness is required.
+
+The literature reviewed in Section~\ref{sec:internet-voting} demonstrates the
+difficulty of building Internet-based voting systems, and reviews a number of
+theoretical and real-world attacks that have been demonstrated in the various
+attempts to build such systems. As seen in Section~\ref{sec:e2e-viv}, the
+tensions present in the security, privacy, and authentication requirements of
+voting systems are challenging to resolve; however, although still not without
+risks, there is promise in Internet voting if systems can be designed which
+achieve end-to-end verifiability.
+
+Section~\ref{sec:architecture-and-design} explored several election,
+authorization, and delegation designs for use on the Ethereum blockchain.
+However, although Chapter~\ref{chap:results} demonstrated the possibility
+implementing such systems, the issues outlined in Section~\ref{sec:analysis}
+make clear that the Ethereum blockchain still requires many improvements before
+it could be considered capable of supporting the kind of next-generation
+elections and electoral systems this research sought to investigate.
+
+Among other things, the semantics available for building such systems are
+complex and unintuitive, an inevitable source of bugs. Further, tools and
+techniques, which are currently unavailable, are necessary to support
+large-scale systems such as voting; for example, inter-contract communication
+and inter-block computations should be possible with consistent states available
+across contract boundaries from start to end of computation.
+
+More importantly, the computation and storage requirements demanded for
+electoral system operation is too high to make their use on-chain practical in
+most scenarios. Measuring generously, the least expensive vote operation listed
+in Table~\ref{tab:election-simulations} would cost the equivalent of \$7.87, the
+average of these vote operations (across electoral systems implementations)
+measures in at \$28.18 per vote, and in the worst case a single vote operation
+might cost upwards of \$57.11. The cost of executing the most-expensive tallying
+operation is significantly worse, costing the equivalent of over \$1,300.00 to
+tally the ballots of an election simulation with just 100 voters.\footnotemark{}
+These prices are clearly far too high for serious consideration, and at best
+they exclude from consideration a large number of popular electoral systems
+which have much higher computation and storage demands than the ones selected.
+
+\footnotetext{The gas price at the time of writing is approximately 120 gwei.}
+
+These costs appear even worse when viewed in light of the fact that the
+measurements made in Table~\ref{tab:election-simulations} were the product of
+electoral system implementations which were specifically designed to accurately
+measure the raw costs of the electoral systems' computational and storage
+requirements, and therefore included no security or state management systems
+beyond that. Inclusion of such systems which would certainly have made these
+operations more costly. Still, these results should not be viewed in vacuum;
+some estimates put the cost of election administration in the US at around
+\$8.00 per voter, so the lower bounds of these results suggest that there is
+potential here, especially with advancements to the Ethereum network and if some
+scaling issues can be resolved.
+
+\section*{Summary of Accomplishments}
+
+\begin{itemize}
+  \item Designed authorization components for managing voter registration and
+    providing access control in a generalized way.
+
+  \item Implemented election contracts, tests, and simulations to benchmark and
+    analyze electoral system performance and cost.
+
+  \item Identified electoral system criteria relevant to Ethereum-based
+    implementations of electoral systems.
+
+  \item Identified techniques for improving some performance characteristics
+    of electoral systems.
+
+  \item Identified features which damage performance characteristics of
+    electoral systems.
+\end{itemize}
+
+\section*{Future Work}
+
+\begin{itemize}
+  \item Unless scaling issues are resolved, it is likely that more reasonable
+    approaches to on-chain electoral system design would involve using dedicated
+    or permissioned blockchain implementations and leveraging the more
+    traditional approaches to E2E-VIV security as outlined in
+    Section~\ref{sec:e2e-viv} and Section~\ref{sec:analysis}.
+
+  \item If scaling issues are resolved then the following items seem like
+    worthwhile areas of research:
+
+    \begin{itemize}
+      \item A set of hardened electoral system contracts and libraries.
+
+      \item Electoral system contracts which provide support for multi-winner
+        elections and support proportional representation.
+
+      \item A standardized election interface. This seems difficult to produce
+        given the unique inputs and outputs required for different kinds of
+        elections.
+
+      \item An visual interface for marking and casting ballots to election
+        contracts.
+
+      \item Approaches and semantics for achieving consistency with
+        inter-contract computation, especially with regards to inter-block
+        computation.
+    \end{itemize}
+\end{itemize}

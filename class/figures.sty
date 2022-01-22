@@ -1,0 +1,32 @@
+\usepackage{graphicx}
+
+% Figures
+\newcommand{\addfigure}[1]{\includestandalone[width=\linewidth]{figures/#1/figure}}
+%%
+% NOTE: Upon switching to tectonic to build this dissertation it begun to
+%       complain about the usage of `includestandalone{\fig{block}}`, because it
+%       needed some shell-escape functionality, which tectonic does not support.
+%%
+\newcommand{\fig}[1]{figures/#1/figure}
+%%
+% Usage:
+%
+% \figurepdf[optional]{figure-directory}
+%%
+\newcommand{\figurepdf}[2][]{\includegraphics[#1]{figures/#2/figure}}
+
+% TODO: Should this be removed? Why is it here?
+%Theorem, Lemma, etc. environments
+\newtheorem{theorem}{Theorem}%[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{result}[theorem]{Result}
+
+% Personal commands and abbreviations.
+%Define and personal commands here
+
+%Graphics Path to find your pictures
+\graphicspath{{./}{./pictures/}{./figures/}{./03-literature/figures/}{./03-literature/figures/internet-voting/voi/}}
+\DeclareGraphicsExtensions{.pdf,.png}
+

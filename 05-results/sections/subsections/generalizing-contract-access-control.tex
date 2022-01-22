@@ -1,0 +1,41 @@
+\subsubsection{Generalizing Contract Access Control}
+
+In order to generalize \solt{contract} access control we introduce:
+
+\begin{enumerate}
+  \item \sol{interface Authority}, which defines \solt{function}[s] to
+    determine whether some \emph{subject} is permitted to access some
+    \emph{resource},
+  \item \sol{contract Authorization}, which defines a \solt{modifier} for
+    restricting access to \solt{function} calls based on an \solt{address}, and
+  \item \sol{contract Guard}, a convenience \solt{contract}, which provides an
+    implementation of \sol{interface Authorization} by aggregating
+    implementations of \sol{interface Authority}.
+\end{enumerate}
+
+These components combined allow us to provide a generalized access control
+model; separating the responsibilities of Authorization, deferring
+Authorization.\footnotemark{}
+\todo{Alternative names: Guard, Authority, Enforcer, Authorization}
+
+\footnotetext{
+  I think I would maybe prefer \sol{interface Authorization} to define
+  \sol{isAuthorized} and for \sol{interface Authority} to define
+  \sol{getAuthority} and \sol{setAuthority}.
+
+  A better name in that case might be \sol{interface AuthorityManager}.
+}
+
+\begin{figure}[H]
+    \centering
+    \caption{Generalized contract access control.}% \label{fig:authorization}
+    \figurepdf[]{guard}
+    % \includegraphics[width=\textwidth]{figures/authorization/figure}
+    % \includestandalone[width=\textwidth]{\fig{authorization}}
+\end{figure}
+
+\input{05-results/implementations/interface-authority}
+
+\input{05-results/implementations/interface-authorization}
+
+\input{05-results/implementations/contract-guard}

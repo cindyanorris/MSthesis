@@ -1,0 +1,154 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usetikzlibrary{calc}
+\usetikzlibrary{fit}
+\usetikzlibrary{shapes}
+\usetikzlibrary{arrows}
+\usetikzlibrary{intersections}
+
+\tikzset{>=latex}
+\tikzset{transaction/.style={font=\small{#1}}}
+\tikzset{key/.style={rectangle, draw, minimum height=10pt, text width=2cm, align=center}}
+\tikzset{hash/.style={rectangle, draw, minimum height=10pt, text width=1cm, align=center}}
+\tikzset{signature/.style={rectangle, draw, minimum height=10pt, text width=2cm, align=center}}
+
+\tikzset{block/.style={font=\small{#1}}}
+\tikzset{blockheader/.style={font=\small{#1}}}
+\tikzset{field/.style={rectangle, draw, minimum height=10pt, text width=2cm, align=center}}
+\tikzset{hash/.style={rectangle, dashed, draw, minimum height=10pt, text width=1.2cm, align=center}}
+\tikzset{tx/.style={rectangle, draw, minimum height=10pt, text width=2cm, align=center}}
+
+
+\begin{document}
+\begin{tikzpicture}[remember picture, every node/.style={},
+        level 1/.style={sibling distance=40mm},
+        level 2/.style={sibling distance=20mm},
+        edge from parent/.style={draw,latex-}
+    ]
+    % ------- Start Block 0 ------- %
+    \node [block] (b0) at (20,20) {Block 0};
+    \node [blockheader] (h0) at ($(b0.south) + (0,-15pt)$) {Block Header};
+    \node [field] (prevHash0) at ($(h0.south) + (0,-15pt)$) {Previous Header Hash};
+
+    \node [field] (version0) at ($(prevHash0.south) + (-50pt,-15pt)$) {Version};
+    \node [field] (timestamp0) at ($(prevHash0.south) + (50pt,-15pt)$) {Timestamp};
+
+    \node [field] (difficulty0) at ($(version0) + (0,-30pt)$) {Difficulty};
+    \node [field] (nonce0) at ($(timestamp0) + (0,-30pt)$) {Nonce};
+
+    \node [field] (merkleRoot0) at ($(nonce0) + (-50pt,-30pt)$) {Merkle Root}
+        child {node [hash] {Hash01}
+            child {node [hash] (hash0) {Hash0}
+                child {node [grow=down, draw] (tx0) {TX0}}
+            }
+            child {node [hash] {Hash1}
+                child {node [grow=down, draw] {TX1}}
+            }
+        }
+        child {node [hash] {Hash23}
+            child {node [hash] {Hash2}
+                child {node [grow=down, draw] {TX2}}
+            }
+            child {node [hash] (hash3) {Hash3}
+                child {node [grow=down, draw] {TX3}}
+            }
+        };
+
+     % The border surrounding the block header.
+    \node (hb0) [draw=black, fit={(h0) ($(version0.west)+(-5pt,0)$) 
+            ($(timestamp0.east)+(5pt,0)$) (difficulty0)
+        (nonce0) ($(merkleRoot0.south) - (0,1pt)$)}] {};
+
+     % The border surrounding the entire block.
+    \node (bb0) [draw=black, fit={(b0) ($(hash0.west) - (4pt,0)$)
+        ($(hash3.east) + (4pt,0)$) ($(tx0.south) - (0,1pt)$)}] {};
+    % ------- End Block 0 ------- %
+
+    % ------- Start Block 1 ------- %
+    \node [block] (b1) at ($(b0) + (260pt,0)$) {Block 1};
+    \node [blockheader] (h1) at ($(b1.south) + (0,-15pt)$) {Block Header};
+    \node [field] (prevHash1) at ($(h1.south) + (0,-15pt)$) {Previous Header Hash};
+
+    \node [field] (version1) at ($(prevHash1.south) + (-50pt,-15pt)$) {Version};
+    \node [field] (timestamp1) at ($(prevHash1.south) + (50pt,-15pt)$) {Timestamp};
+
+    \node [field] (difficulty1) at ($(version1) + (0,-30pt)$) {Difficulty};
+    \node [field] (nonce1) at ($(timestamp1) + (0,-30pt)$) {Nonce};
+
+    \node [field] (merkleRoot1) at ($(nonce1) + (-50pt,-30pt)$) {Merkle Root}
+        child {node [hash] {Hash01}
+            child {node [hash] (hash0) {Hash0}
+                child {node [grow=down, draw] (tx0) {TX0}}
+            }
+            child {node [hash] {Hash1}
+                child {node [grow=down, draw] {TX1}}
+            }
+        }
+        child {node [hash] {Hash23}
+            child {node [hash] {Hash2}
+                child {node [grow=down, draw] {TX2}}
+            }
+            child {node [hash] (hash3) {Hash3}
+                child {node [grow=down, draw] {TX3}}
+            }
+        };
+
+     % The border surrounding the block header.
+    \node (hb1) [draw=black, fit={(h1) (version1) (timestamp1) (difficulty1)
+        (nonce1) ($(merkleRoot1.south) - (0,1pt)$)}] {};
+
+     % The border surrounding the entire block.
+    \node (bb1) [draw=black, fit={(b1) ($(hash0.west) - (4pt,0)$)
+        ($(hash3.east) + (4pt,0)$) ($(tx0.south) - (0,1pt)$)}] {};
+        %
+    % A line from the previous block to the hash.
+    \draw [->, thick] (hb0.east |- prevHash1) -- (prevHash1)
+        node [near start, fill=white] (hash0) {Hash};
+
+    % ------- End Block 1 ------- %
+
+    % ------- Start Block 2 ------- %
+    \node [block] (b2) at ($(b1) + (260pt,0)$) {Block 2};
+    \node [blockheader] (h2) at ($(b2.south) + (0,-15pt)$) {Block Header};
+    \node [field] (prevHash2) at ($(h2.south) + (0,-15pt)$) {Previous Header Hash};
+
+    \node [field] (version2) at ($(prevHash2.south) + (-50pt,-15pt)$) {Version};
+    \node [field] (timestamp2) at ($(prevHash2.south) + (50pt,-15pt)$) {Timestamp};
+
+    \node [field] (difficulty2) at ($(version2) + (0,-30pt)$) {Difficulty};
+    \node [field] (nonce2) at ($(timestamp2) + (0,-30pt)$) {Nonce};
+
+    \node [field] (merkleRoot2) at ($(nonce2) + (-50pt,-30pt)$) {Merkle Root}
+        child {node [hash] {Hash01}
+            child {node [hash] (hash0) {Hash0}
+                child {node [grow=down, draw] (tx0) {TX0}}
+            }
+            child {node [hash] {Hash1}
+                child {node [grow=down, draw] {TX1}}
+            }
+        }
+        child {node [hash] {Hash23}
+            child {node [hash] {Hash2}
+                child {node [grow=down, draw] {TX2}}
+            }
+            child {node [hash] (hash3) {Hash3}
+                child {node [grow=down, draw] {TX3}}
+            }
+        };
+
+     % The border surrounding the block header.
+    \node (hb2) [draw=black, fit={(h2) (version2) (timestamp2) (difficulty2)
+        (nonce2) ($(merkleRoot2.south) - (0,1pt)$)}] {};
+
+     % The border surrounding the entire block.
+    \node (bb2) [draw=black, fit={(b2) ($(hash0.west) - (4pt,0)$)
+        ($(hash3.east) + (4pt,0)$) ($(tx0.south) - (0,1pt)$)}] {};
+        %
+    % A line from the previous block to the hash.
+    \draw [->, thick] (hb1.east |- prevHash2) -- (prevHash2)
+        node [near start, fill=white] (hash1) {Hash};
+
+    % ------- End Block 2 ------- %
+\end{tikzpicture}
+\end{document}

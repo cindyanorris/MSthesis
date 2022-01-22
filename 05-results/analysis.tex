@@ -1,0 +1,256 @@
+\section{Analysis}\label{sec:analysis}
+
+Section~\ref{sec:requirements} introduced a set of requirements to judge the
+results of this work and Section~\ref{sec:objectives} introduced a set of
+objectives this research targeted for completion. This section reviews those
+sections in the context of test results produced for this work.
+
+% This work, by virtue of building on an Internet-based network, is accepting
+% risks which make any consideration or application of its results inappropriate
+% for use in large-scale high-risk elections. Specifically, the intrinsically
+% electronic and remote properties, which are inherent in all publicly-available
+% ``off-the-shelf'' blockchain technologies, present so large an attack surface
+% for would-be attackers that it becomes an untenable foundation for any voting
+% systems being considered for use in elections where a high-risk threat model is
+% maintained. Correctness, security, integrity, verifiability, and efficacy are
+% the primary concerns of the systems designed and considered in this research;
+% however, it is worth noting that the privacy constraints offered by traditional
+% voting systems are severely loosened within the scope of this research: no
+% notion of receipt-freedom is assumed and privacy is only guaranteed insofar as
+% the pseudo-anonymity provided by the Ethereum blockchain is
+% maintained.\footnotemark{}
+%
+% \footnotetext{
+%   It is feasible that blockchain technologies could demonstrate utility in
+%   large-scale voting systems if incorporated using well-established and
+%   known-safe patterns: e.g., voter verifiable paper audit trails, private
+%   networks, requiring transactions be signed by authorized sources, using voting
+%   machines which have been certified by a federal commission, which are being
+%   hosted in traditional polling locations, and are leveraging the appropriate
+%   cryptographic techniques to ensure privacy; e.g., homomorphic encryption,
+%   blind signing, and mix networks.
+%
+%   % The feasibility of leveraging fully- or partially-decentralized blockchains
+%   % as a foundation for large-scale voting systems demands significantly more
+%   % research into crypto-economic incentivization and disincentivization models
+%   % for honest and dishonest actors.
+%
+%   % That said, the computational and storage requirements of such a project
+%   % would almost certainly necessitate a dedicated blockchain solution.
+% }
+
+\subsection{Requirements}
+Table~\ref{tab:research-requirements-fulfilled} highlights these requirements
+targeted from Section~\ref{sec:requirements} and provides an overview of what
+was and was not fulfilled. \\
+
+\begin{spacing}{1.1}
+  \begin{longtabu} to \textwidth{X[0.1,l] X[2.3,j] X[0.8,c] X[0.8,c] X[0.8,c] X[1.1,c]}
+    % \multicolumn{2}{c}{Requirements} \\
+    \caption{Requirements targeted for fulfillment.} \\
+    \toprule
+    \multicolumn{2}{l}{{Requirements}}                                       & \multicolumn{3}{c}{Fulfilled}                  & {Unfulfilled} \\
+                                                                               \cmidrule{3-5}
+    \multicolumn{2}{l}{}                                                     & {Fully}       & {Mostly}       & {Partially}   &               \\
+    \midrule
+    \endhead
+    \multicolumn{2}{l}{\emph{Technical}} \\
+    % \cmidrule(lr){1-2} \cmidrule(lr){3-5} \cmidrule(lr){6-6}
+    % \cline{1-2}
+    % \midrule
+    % \multirow{10}{*}{\rot[90]{Technical}}     & Authentication               & \textbullet{} &                &               &               \\
+                                              & Authentication               &               & \textbullet{}  &               &               \\
+                                              & System Operational           & \textbullet{} &                &               &               \\
+                                              & Reliability                  &               & \textbullet{}  &               &               \\
+                                              & Security                     &               & \textbullet{}  &               &               \\
+                                              & Auditing                     &               & \textbullet{}  &               &               \\
+                                              & Functional                   &               & \textbullet{}  &               &               \\
+                                              & Interoperability             &               &                & \textbullet{} &               \\
+                                              & Certification                &               &                & \textbullet{} &               \\
+                                              & Accessibility                &               &                &               & \textbullet{} \\
+                                              & Usability                    &               &                &               & \textbullet{} \\
+    % \midrule
+    % \cmidrule(lr){1-2} \cmidrule(lr){3-5} \cmidrule(lr){6-6}
+    \addlinespace[0.4ex]
+    \cmidrule(lr){1-2} \cmidrule(lr){3-5} \cmidrule(lr){6-6}
+    \multicolumn{2}{l}{\emph{Non-Functional}} \\
+    % \cmidrule(lr){1-2} \cmidrule(lr){3-5} \cmidrule(lr){6-6}
+    % \cline{1-2}
+    % \cmidrule{1-2}
+    % \midrule
+    % \multirow{5}{*}{\rot[90]{Non-Functional}} & Maintenance/Evolvability     &               & \textbullet{}  &               &               \\
+                                              & Maintenance/Evolvability     &               &                & \textbullet{} &               \\
+                                              & Assurance                    &               &                & \textbullet{} &               \\
+                                              & Operational                  &               &                &               & \textbullet{} \\
+                                              & Procedural                   &               &                &               & \textbullet{} \\
+                                              & Legal                        &               &                &               & \textbullet{} \\
+    \bottomrule\label{tab:research-requirements-fulfilled}
+  \end{longtabu}
+\end{spacing}
+
+\subsubsection{Technical Requirements}
+The technical requirements are ones which are meant to be fulfilled through the
+design and architecture of the system. The system operational requirements are
+considered fulfilled here. The functional and audibility requirements were
+fulfilled as expected. The accessibility and usability requirements were not
+targeted.
+
+\paragraph{Certification}
+The certification requirements assert that proofs of correctness are necessary,
+which this research falls short of, but the tests and documentation available do
+fulfill other certification requirements listed.
+
+\paragraph{Authentication}
+This research deeply explored authentication models and techniques for managing
+access control for use in constructing voter registries. Much of this research
+focused on building systems which would be reusable and composable across many
+election and non-election systems; however, the result of these access control
+models produced a security interface that, although working, is difficult to
+interact with in a reasonable way. Inter-contract communication is difficult and
+managing locks and mutexes across them is even more-so. Managing a security
+interface which is entirely or mostly internal to a single contract is likely a
+much safer approach to consider in most cases, although probably also a less
+flexible model in the long-term. However, a majority of the most important
+authentication functionalities required are provided through the underlying
+blockchain infrastructure.
+
+\paragraph{Reliability Requirements}
+The underlying resiliency of the Ethereum network provides strong reliability
+guarantees; however, the network is not without its issues and has seen attacks
+on it over time. More recently the network has faced serious scaling issues
+which have driven gas prices up and made smart contract operation an expensive
+endeavour.
+
+\paragraph{Security Requirements}
+This work, by virtue of building on an Internet-based network, is accepting
+risks which make any consideration or application of its results inappropriate
+for use in large-scale high-risk elections. Specifically, the intrinsically
+electronic and remote properties, which are inherent in all publicly-available
+``off-the-shelf'' blockchain technologies, present so large an attack surface
+for would-be attackers that it becomes an untenable foundation for any voting
+systems being considered for use in elections where a high-risk threat model is
+maintained. Correctness, security, integrity, verifiability, and efficacy are
+the primary concerns of the systems designed and considered in this research;
+however, it is worth noting that the privacy constraints offered by traditional
+voting systems are severely loosened within the scope of this research: no
+notion of receipt-freedom is assumed and privacy is only guaranteed insofar as
+the pseudo-anonymity provided by the Ethereum blockchain is maintained.
+
+It is feasible that blockchain technologies could demonstrate utility in
+large-scale voting systems if incorporated using well-established and known-safe
+patterns: e.g., voter verifiable paper audit trails, private networks, requiring
+transactions be signed by authorized sources, using voting machines which have
+been certified by a federal commission, which are being hosted in traditional
+polling locations, and are leveraging the appropriate cryptographic techniques
+to ensure privacy; e.g., homomorphic encryption, blind signing, and mix
+networks.
+
+\subsubsection{Non-Functional Requirements}
+The non-functional requirements as described in Section~\ref{sec:requirements}
+are only fulfilled insofar as this document and source code exists. Strong
+efforts were not otherwise made to fulfill these requirements.
+
+\subsection{Objectives}
+Section~\ref{sec:objectives} introduced a set of objectives this research
+targeted for completion. This research succeeded in exploring electoral system
+design and implementation and produced several contracts demonstrating
+single-winner electoral systems. However, this failed to implement a
+multi-winner electoral system supporting proportional representation. STV is
+often described as a complex to implement electoral system with difficult to
+handle edge-cases. The finite storage and computational resources made available
+by the EVM make it a poor candidate for exploration. There are other
+proportional representation systems with much lower storage and execution
+complexities which are probably better candidates for resource-constrained
+environments like smart contracts.
+
+This research thoroughly explored and designed many voter authentication,
+registration, and access control patterns for voter registration. However, as
+previously stated, inter-contract communication is difficult to manage,
+especially when multiple contracts might be deferring responsibility to a single
+contract managing state. This issue, combined with the resource constraints of
+smart contracts, is ultimately what made further research into delegative or
+liquid governance models infeasible. There are too many inter-contract
+communication issues to manage when attempting to compute delegations across
+contracts and there does not appear to be any clear way of designing smart
+contract dependencies in a way which enabled them to be open to state changes
+while still providing consistent values during sensitive contract execution
+procedures like ballot tabulation or delegation analysis.
+
+% 1. This research aims to explore various electoral systems and features, using the
+% content reviewed in Section 2.1 as a basis for exploration.
+% (a) Provide a range of kinds of electoral contracts using Table 2.1 and Table 2.2
+% as the primary resource for electoral system and feature selection.
+% i. Support single-winner elections and provide plurality and majority elec-
+% toral system in fulfillment of that objective.
+% A. Implement first-past-the-post to fulfill the targeted single-winner
+% plurality electoral system, due mostly to the fact that it is extremely
+% simple, well-understood, and widely-adopted.
+% B. Implement range vote to fulfill the targeted single-winner majority
+% electoral system, due to its effectiveness and simplicity.
+% ii. Support multi-winner elections and provide an electoral system which
+% offers proportional representation; Single transferable vote is selected as
+% the electoral system implementation to fulfill both objectives due to its
+% 89wide-adoption, prevalence, and effectiveness as a PR system.
+% (b) Explore the design, implementation, and efficacy of various ballot types
+% across the various electoral systems selected.
+% 2. This research aims to explore voter authentication, registration, and access control
+% patterns for managing voter registration.
+% 3. This research aims to explore delegative or liquid governance models.
+% 86Auditability Requirements Ethereum inherently offers a tremendously detailed
+% log through its blockchain structure which provides a wide range of opportunities for
+% detailed auditing and validation. Furthermore, auditing and validation functionality
+% are inherent features of the blockchain. However, the auditability which Ethereum
+% provides is not considered a privacy preserving feature and therefore falls short of
+% the criteria presented.
+% Functional Requirements A subset of the functional requirements are deemed
+% relevant to this research:
+%  Multi-vote functionality is targeted to be investigated and fully satisfied in all
+% electoral system implementations.
+% + Ensuring that “a voter’s ballot, and the act of them casting a ballot, is recorded
+% and retained as expected;” is considered mostly fulfilled through intrinsic prop-
+% erties of the Ethereum blockchain. Where this property falls short is when a
+% voter casts a ballot, broadcasts a transaction to the network, which miners fail
+% to include in any blocks. This is discussed further in Chapter 6, Discussion.
+% − Maintaining voter anonymity is considered partially fulfilled through intrin-
+% sic properties of the Ethereum blockchain. While it is technically possible to
+% broadcast privacy-maintaining transactions, those which preserve anonymity
+% on the Ethereum network, it is likely beyond the capabilities of most voting
+% 87actors and would be difficult to guarantee in any meaningful way. Pseudo-
+% anonymity is a better profile of the kind of anonymity whic
+
+% \input{05-results/example}
+
+% \blockquote{
+%     Arrow assumed that social orderings will be derived, if at all, from information
+%     about people's preferences. This information is, in his framework, merely
+%     ordinal. It is the kind of information that is implicated in Condorcet's paradox
+%     of voting, in Section 1, where each person ranks the alternatives from better to
+%     worse but there is nothing beyond this about how strong anybody's preferences
+%     are, or about how the preferences of one person compare in strength to those of
+%     another. In confining aggregation procedures to ordinal information, Arrow
+%     argued that:
+%
+%     [I]t seems to make no sense to add the utility of one individual, a psychic
+%     magnitude in his mind, with the utility of another individual. (Arrow 1951
+%     [1963]: 11)
+%
+%     His point was that even if people do have stronger and weaker preferences, and
+%     even if the strengths of their preferences can somehow be measured and made
+%     available as a basis for social decisions, nevertheless ordinal information is
+%     all that matters because preferences are “interpersonally incomparable”.
+%     Intuitively, what this means is that there is no saying how much more strongly
+%     someone must prefer one thing to another in order to make up for the fact that
+%     someone else's preference is just the other way around. Arrow saw no reason to
+%     provide aggregation procedures with information about the strength of
+%     preferences because he thought that they cannot put such information to
+%     meaningful use.
+% }
+
+% Section: Authorization Components
+% \input{05-results/sections/authorization}
+
+% Section: Election Components
+% \input{05-results/sections/election}
+
+% Section: Delegation Components
+% \input{05-results/sections/delegation}

@@ -1,0 +1,403 @@
+\subsection{Ethereum}
+
+Ethereum is a blockchain-based system initially proposed in late 2013,
+post-Bitcoin, and released in 2015.\cite{ethereum-white} Ethereum introduced a
+few novel features and functionalities with its blockchain network which are not
+available in the Bitcoin network. Most notably Ethereum offers a distributed
+decentralized Turing-complete computing platform via the Ethereum Virtual
+Machine (EVM), which aims to provide an application layer which ``[runs] exactly
+as programmed without any possibility of downtime, censorship, fraud or third
+party interference.''\cite{ethereum.org,ethereum-yellow}
+
+\subsubsection{Fundamental Concepts}
+
+\paragraph{Currency}
+Like Bitcoin, Ethereum's blockchain defines and leverages its own token,
+\solt{ether} --- also referred to as \solt{eth} or ETH, and sometimes denoted
+using the Greek symbol Xi, $\Xi$, the uppercase Old English letter Eth, \DH, or,
+more rarely, $\blacklozenge$ --- which acts as the underlying currency of its
+blockchain protocol. The smallest unit of \solt{ether} is
+\emph{wei}.~\cite{mastering-ethereum,ethereum-yellow} The
+denominations of \solt{ether} are broken down as follows:
+% \ref{book:mastering-ethereum}
+% \ref{paper:ethereum}
+
+% \todo{Add denomination table here}
+
+% \ref{book:mastering-ethereum}
+% \ref{paper:ethereum}
+%
+% See page 2 of Ethereum yellow paper.
+%
+% Table 2-1 from page 14 of Mastering Ethereum.
+%
+% | Value (in wei) | Exponent | Common Name | SI Name               |
+% |----------------|----------|-------------|-----------------------|
+% | 1              | 1        | wei         | Wei                   |
+% | 1000           | 10^3     | Babbage     | Kilowei or femroether |
+% |                |          |             |                       |
+% |                |          |             |                       |
+
+\begin{center}
+    \setstretch{1.5}
+    \footnotesize
+    \begin{longtabu} to \textwidth{@{} X[3] X[] X[] X[2] @{}}
+    \caption{Ether Denominations~\cite{mastering-ethereum}}\label{tab:eth-denominations} \\
+    \toprule
+    Value (in wei)                    & Exponent & Common Name & SI Name \\
+    \midrule
+    \endfirsthead
+    \toprule
+    Value (in wei)                    & Exponent & Common Name & SI Name \\
+    \midrule
+    \endhead
+    \taburowcolors{white..gray!15}
+    1                                 & $10^{0}$    & wei       & Wei \\
+    1,000                             & $10^{3}$    & Babbage   & Kilowei or femtoether \\
+    1,000,000                         & $10^{6}$    & Lovelace  & Megawei or picoether \\
+    1,000,000,000                     & $10^{9}$    & Shannon   & Gigawei or nanoether \\
+    1,000,000,000,000                 & $10^{12}$   & Szabo     & Microether or micro \\
+    1,000,000,000,000,000             & $10^{15}$   & Finney    & Milliether or milli \\
+    1,000,000,000,000,000,000         & $10^{18}$   & Ether     & Ether \\
+    1,000,000,000,000,000,000,000     & $10^{21}$   & Grand     & Kiloether \\
+    1,000,000,000,000,000,000,000,000 & $10^{24}$   &           & Megaether \\
+
+    %extern u256 const c_copyGas;			///< Multiplied by the number of 32-byte words that are copied (round up) for any *COPY operation and added.
+    \bottomrule
+    % \begin{varwidth}{\textwidth}
+    %   These names pay homage to some of the great minds of cryptography and
+    %   computer science.
+    % \end{varwidth}
+  \end{longtabu}
+\end{center}
+
+\paragraph{Accounts}
+Accounts are an Ethereum primitive which provide an abstraction over the Bitcoin
+equivalent signature chain process; this abstraction helps to both simplify the
+concept of token ownership as well as extend the idea of what a token is, what a
+token can be, and how blockchain state can be managed and organized.
+
+Accounts are identified by a 160-bit code, their \solt{address}, and are
+internally represented by four properties:
+
+\begin{enumerate}
+  \item \sol{nonce}, a monotonically increasing counter which represents the
+    number of transactions sent from the account.
+  \item \sol{balance}, the amount of \solt{ether}, expressed in wei, which is
+    owned by the account.
+  \item \sol{storageRoot}, a 256-bit hash of the root node of a Merkle Patricia
+    tree which encodes the storage contents of the account.
+
+    % RLP - Recursive Length Prefix
+    % https://eth.wiki/en/fundamentals/rlp
+
+    % https://blog.ethereum.org/2015/11/15/merkling-in-ethereum/
+    %
+    % From the yellow paper:
+    % \displayquote{
+    %   A 256-bit hash of the root node of a Merkle Patricia tree that encodes
+    %   the storage contents of the account (a mapping between 256-bit integer
+    %   values), encoded into the trie as a mapping from the Keccak 256-bit hash
+    %   of the 256-bit integer keys to the RLP-encoded 256-bit integer values.
+    %   This tree encodes the hash of the storage contents of this account, and
+    %   is empty by default.
+    % }
+
+
+  \item \sol{codeHash}, an immutable hash of the EVM code corresponding to the
+    account.
+\end{enumerate}
+
+Although all accounts are structurally identical it is useful to distinguish
+between the two practical kinds of accounts which one is likely to encounter and
+interact with on the Ethereum blockchain, \emph{external accounts} and
+\emph{internal accounts}:
+%
+\begin{description}[font=\normalfont\emph]
+  % \subsubparagraph{External Accounts}
+  \item[External Accounts] --- also referred to as simple accounts, non-contract
+    accounts, externally owned accounts (EOA), and sometimes user accounts ---
+    are defined as accounts whose \sol{codeHash} value is the Keccak-256 hash of
+    an empty string; i.e., the account contains no code.
+
+  %\subsubparagraph{Internal Accounts}
+  \item[Internal Accounts] --- also referred to as contract accounts --- are
+    those accounts which are not external accounts; i.e., the account contains
+    code.
+\end{description}
+%
+Both kinds of accounts have the ability to send and receive \solt{ether} as well
+as interact with \solt{contract}[s] which have been deployed to the Ethereum
+network. However, there are some key differences between the two kinds of
+accounts which are worth highlighting:\cite{ethereum:accounts}
+
+\begin{itemize}[label=]
+  \item External Accounts
+    \begin{itemize}[label=$\bullet$]
+      \item External accounts are managed by public-key cryptography.
+      \item External account creation costs no \solt{ether}.
+      \item Only external accounts can \emph{initiate} transactions.
+      \item Transactions between external accounts can only transact
+        \solt{ether}.
+    \end{itemize}
+  \item Internal Accounts
+    \begin{itemize}[label=$\bullet$]
+      \item Internal accounts are managed by code.
+      \item Internal account creation costs \solt{ether} which reflects the cost
+        of storing code on the Ethereum network.
+      \item Internal accounts can execute code via the EVM upon receiving
+        transactions, enabling a wide range network functionalities.
+      \item Internal accounts can only send transactions in response to
+        receiving transactions. \todo{This will have a major impact on the
+        methodologies.}
+    \end{itemize}
+\end{itemize}
+
+\paragraph{Transactions}
+A transaction is a cryptographically-signed instruction constructed by an
+external actor and submitted to the Ethereum network. There are two kinds of
+transactions worth distinguishing, contract creation transactions and message
+call transactions; both kinds of transactions share the following common
+properties:
+
+\begin{enumerate}
+  \item \sol{to}, a 160-bit \solt{address} representing the \emph{recipient's}
+    account. This value is omitted when building a contract creation
+    transaction.
+
+  \item \sol{from}, a signature which identifies the \emph{sender} of the
+    transaction by account \solt{address}.\footnotemark{}
+
+    \footnotetext{
+      This field does not \emph{technically} exist, in actuality the signature
+      is represented as three distinct fields (\emph{v}, \emph{r}, \emph{s}),
+      which can be used to determine the \solt{address} representing the sender
+      of the transaction.
+    }
+
+  \item \sol{value}, the amount of \solt{ether}, expressed in wei, which is
+    to be transferred to the recipient.
+
+  \item \sol{nonce}, a value equal to the number of transactions which have been
+    sent by the \emph{sender}.
+
+  \item \sol{gasPrice}, a value representing the amount of wei to be paid per
+    unit of gas (expanded on below).
+
+  \item \sol{gasLimit}, a value representing the maximum amount of gas which
+    should be used executing the transaction.
+\end{enumerate}
+
+Contract creation transactions include the following additional property in the
+transaction:
+
+\begin{enumerate}
+  \item \sol{init}, an EVM-code fragment which is executed only once and
+    discarded thereafter; it returns the \sol{body}, a second fragment of code
+    that executes each time the account receives a message call, which can occur
+    either by transaction or internal execution of code.
+\end{enumerate}
+
+In contrast, a message call transaction includes the following additional
+property:
+
+\begin{enumerate}
+  \item \sol{data}, an unlimited size byte array which contains the input data
+    of the message call.
+\end{enumerate}
+
+\paragraph{Ethereum Virtual Machine}\label{eth:evm}
+The Ethereum Virtual Machine (EVM) is the execution environment which Ethereum
+code is processed in. The EVM processes low-level bytecode and takes actions
+against the state of the Ethereum blockchain in response: reading, processing,
+and writing data. The Ethereum Virtual Machine Specification introduces a
+low-level instruction set which defines the available operations which an EVM
+implementation should support: the opcodes, their inputs, outputs, and various
+other implementation details. The EVM can be described as a \emph{state
+transition function}, $Y(S, T) = S'$; given a set of transactions, $T$, and an
+initial state, $S$, the state transition function, $Y(S, T)$, will produce a new
+output state, $S'$.\cite{ethereum-yellow} Several EVM implementations exist
+which have been written in various languages, e.g., Go, Python, and C++.
+
+\subparagraph{Language Support}\label{eth:languages}
+Several higher-level languages exist which target the Ethereum Virtual Machine
+and can be used to build ``smart contracts;'' e.g., Solidity which draws
+inspiration from C++ and JavaScript, and Vyper which describes itself as a
+``Pythonic Smart Contract Language.'' These languages ship with compilers which
+can be used to translate their code into low-level EVM bytecode; Solidity, for
+example, is compiled using \solt{solc}, the Solidity compiler.
+
+% \subsubsection{Network Topology}
+\subsubsection{Network Topology}
+Like Bitcoin, Ethereum exists as a network of nodes, each node supporting
+differing functionalities, which work collectively to construct the Ethereum
+blockchain and support the surrounding ecosystem. These nodes can be classified
+by the functionalities which they support.
+
+\paragraph{Node Types}
+There exists several implementations of the Ethereum protocol, i.e., Ethereum
+clients, which have been written in various languages, e.g., Geth in Go, Parity
+in Rust, and pyethereum in Python. Some of these clients support running in
+different modes.
+
+\begin{itemize}
+  \item A \emph{full node} is a complete implementation of the Ethereum
+    protocol. A full nodes processes and validates all transactions which have
+    been added to the Ethereum blockchain, thus helping to support the
+    resiliency and reliability of the network. To support this functionality, a
+    full node must maintain a complete copy of the blockchain. Full nodes are
+    also capable of deploying and interacting with contracts, support mining and
+    wallet functionality, and are able to route transactions throughout the
+    network.
+
+  \item A \emph{remote client} supports a subset of the functionality that a
+    full node supports, generally wallet functionality and the ability to
+    broadcast transactions. Other more complex functionalities generally require
+    interacting with with a full node or other remote services which are capable
+    of fulfilling requests on a remote client's behalf.
+\end{itemize}
+
+\paragraph{The Blockchain}
+Like Bitcoin, the Ethereum blockchain is constructed by leveraging a
+Proof-of-Work (PoW) algorithm to reach consensus throughout the network. The
+proof-of-work algorithm leveraged by Ethereum, Ethash, helps to build trust and
+reliability throughout the network while also securing the blockchain and
+ensuring that EVM code execution has been processed and that the results
+produced from said execution are as expected. Ethereum offers cryptoeconomic
+incentivization in the form of \solt{ether} to promote participation in the
+proof-of-work process.\cite{ethereum-yellow}
+
+\subparagraph{Blocks}
+The Ethereum protocol groups collections of transactions into \emph{blocks}.
+Blocks are linked to previous blocks, via cryptographic hash, which reflect the
+prior states of the blockchain. When processed collectively these blocks reflect
+the current state of the Ethereum blockchain.
+
+\subparagraph{Proof-of-Work}
+Ethereum's proof-of-work algorithm, Ethash, is a proof-of-work algorithm which
+was initially inspired by the Hashimoto and Dagger algorithms. The primary
+motivation behind the Ethash algorithm was to produce a PoW algorithm which
+would be resistant to application-specific integrated circuits (ASICs). The
+primary mechanism leveraged to achieve ASIC-resistance lies in the algorithm's
+memory-bound nature: a significant amount of memory, in addition to computation,
+is required to correctly compute a proof-of-work solution. By requiring large
+amounts of memory-bound operations the algorithm makes itself resistant to most
+kinds of specialized memories and caches. Additionally, the memory requirements
+are designed to grow and shift over time such that building rapid static caches
+would become prohibitively expensive. In some sense the Ethash algorithm might
+be better described as Proof-of-Memory.\cite{dagger-hashimoto,hashimoto,dagger}
+
+The Ethereum network has been attempting to migrate away from Ethash to a
+lower-cost consensus algorithm operating through Proof-of-Stake (PoS) but has
+yet to complete the transition.
+
+% Talk about the Greedy Heaviest Observed Subtree (GHOST) protocol.
+
+\subparagraph{Gas}
+In order to validate that EVM code has been executed, and executed as expected,
+each full node on the network must recompute all transactions and whatever EVM
+code those transactions have triggered when validating blocks. It is not
+difficult to imagine how this might cause serious problems and introduce room
+for exploitation within the network, \sol{while true { expensiveOperation() }}.
+In order to address this the Ethereum specification introduces an abstraction,
+\emph{gas}, which has a market-based value and must be paid by the
+transaction-sender up-front when generating a transaction. Each operation
+computed by the EVM has an associated gas-price and that gas price is ``paid''
+to the node who successfully mints a block. If an insufficient amount of gas is
+provided by the transaction-sender then the EVM will throw an out-of-gas (OOG)
+exception: execution halts, the blockchain state is restored, and all gas
+submitted is forfeited to the node. If an excess of gas is provided then any gas
+remaining after transaction execution is refunded to the sender. When generating
+a transaction on the Ethereum network the creator of the transaction has the
+choice of defining how much wei they are willing to pay per unit of gas. Nodes
+are incentivized to process transactions which offer more wei per unit of gas
+relative to the rest of the transactions available for processing on the
+network. Table~\ref{tab:gas-costs} introduces gas costs as defined by the
+Ethereum Yellow Paper.
+
+
+% Stuff about gas. What follows is a table of some gas costs as defined in the Ethereum
+% yellow paper.
+
+\begin{center}
+  \setstretch{1.5}
+  \scriptsize
+  \begin{longtabu} to \textwidth{@{} X[1.1,l] X[0.5,r] X[7,l] @{}}
+  \caption{Fee Schedule\cite{ethereum-yellow}}\label{tab:gas-costs} \\
+  \toprule
+  Name & Value & Description* \\
+  \midrule
+  \endfirsthead
+  \toprule
+  Name & Value & Description* \\
+  \midrule
+  \endhead
+  \taburowcolors{white..gray!15}
+  $G_{zero}$ & 0 & Nothing paid for operations of the set {\tiny $W_{zero}$}. \\
+  $G_{base}$ & 2 & Amount of gas to pay for operations of the set {\tiny $W_{base}$}. \\
+  $G_{verylow}$ & 3 & Amount of gas to pay for operations of the set {\tiny $W_{verylow}$}. \\
+  $G_{low}$ & 5 & Amount of gas to pay for operations of the set {\tiny $W_{low}$}. \\
+  $G_{mid}$ & 8 & Amount of gas to pay for operations of the set {\tiny $W_{mid}$}. \\
+  $G_{high}$ & 10 & Amount of gas to pay for operations of the set {\tiny $W_{high}$}. \\
+  $G_{extcode}$ & 700 & Amount of gas to pay for operations of the set {\tiny $W_{extcode}$}. \\
+  $G_{balance}$ & 400 & Amount of gas to pay for a {\tiny BALANCE} operation. \\
+  $G_{sload}$ & 200 & Paid for a {\tiny SLOAD} operation. \\
+  $G_{jumpdest}$ & 1 & Paid for a {\tiny JUMPDEST} operation. \\
+  $G_{sset}$ & 20000 & Paid for an {\tiny SSTORE} operation when the storage value is set to non-zero from zero. \\
+  $G_{sreset}$ & 5000 & Paid for an {\tiny SSTORE} operation when the storage value's zeroness remains unchanged or is set to zero. \\
+  $R_{sclear}$ & 15000 & Refund given (added into refund counter) when the storage value is set to zero from non-zero. \\
+  $R_{selfdestruct}$ & 24000 & Refund given (added into refund counter) for self-destructing an account. \\
+  $G_{selfdestruct}$ & 5000 & Amount of gas to pay for a {\tiny SELFDESTRUCT} operation. \\
+  $G_{create}$ & 32000 & Paid for a {\tiny CREATE} operation. \\
+  $G_{codedeposit}$ & 200 & Paid per byte for a {\tiny CREATE} operation to succeed in placing code into state. \\
+  $G_{call}$ & 700 & Paid for a {\tiny CALL} operation. \\
+  $G_{callvalue}$ & 9000 & Paid for a non-zero value transfer as part of the {\tiny CALL} operation. \\
+  $G_{callstipend}$ & 2300 & A stipend for the called contract subtracted from $G_{callvalue}$ for a non-zero value transfer. \\
+  $G_{newaccount}$ & 25000 & Paid for a {\tiny CALL} or {\tiny SELFDESTRUCT} operation which creates an account. \\
+  $G_{exp}$ & 10 & Partial payment for an {\tiny EXP} operation. \\
+  $G_{expbyte}$ & 50 & Partial payment when multiplied by $\lceil\log_{256}(exponent)\rceil$ for the {\tiny EXP} operation. \\
+  $G_{memory}$ & 3 & Paid for every additional word when expanding memory. \\
+  $G_\text{txcreate}$ & 32000 & Paid by all contract-creating transactions after the {\it Homestead transition}.\\
+  $G_{txdatazero}$ & 4 & Paid for every zero byte of data or code for a transaction. \\
+  $G_{txdatanonzero}$ & 68 & Paid for every non-zero byte of data or code for a transaction. \\
+  $G_{transaction}$ & 21000 & Paid for every transaction. \\
+  $G_{log}$ & 375 & Partial payment for a {\tiny LOG} operation. \\
+  $G_{logdata}$ & 8 & Paid for each byte in a {\tiny LOG} operation's data. \\
+  $G_{logtopic}$ & 375 & Paid for each topic of a {\tiny LOG} operation. \\
+  $G_{sha3}$ & 30 & Paid for each {\tiny SHA3} operation. \\
+  $G_{sha3word}$ & 6 & Paid for each word (rounded up) for input data to a {\tiny SHA3} operation. \\
+  $G_{copy}$ & 3 & Partial payment for {\tiny *COPY} operations, multiplied by words copied, rounded up. \\
+  $G_{blockhash}$ & 20 & Payment for {\tiny BLOCKHASH} operation. \\
+
+  %extern u256 const c_copyGas;			///< Multiplied by the number of 32-byte words that are copied (round up) for any *COPY operation and added.
+  \bottomrule
+  \end{longtabu}
+  % \begin{itemize} % [label=,leftmargin=0mm,topsep=0mm]
+  \begin{multicols}{2}
+    \begin{itemize}[label=,leftmargin=0mm,topsep=0mm,itemsep=0em]
+      \scriptsize
+      \item $W_{zero}$ = \tiny\{{STOP}, {RETURN}\}
+      \scriptsize
+      \item $W_{low}$ = \tiny\{{MUL}, {DIV}, {SDIV}, {MOD}, {SMOD}, {SIGNEXTEND}\}
+      \scriptsize
+      \item $W_{mid}$ = \tiny\{{ADDMOD}, {MULMOD}, {JUMP}\}
+      \scriptsize
+      \item $W_{high}$ = \tiny\{{JUMPI}\}
+      \scriptsize
+      \item $W_{extcode}$ = \tiny\{{EXTCODESIZE}\}
+      \scriptsize
+      \item $W_{base}$ = \tiny\{{ADDRESS}, {ORIGIN}, {CALLER}, {CALLVALUE},
+        {CALLDATASIZE}, {CODESIZE}, {GASPRICE}, {COINBASE} {TIMESTAMP},
+        {NUMBER}, {DIFFICULTY}, {GASLIMIT}, {POP}, {PC}, {MSIZE}, {GAS}\}
+      \scriptsize
+      \item $W_{verylow}$ = \tiny\{{ADD}, {SUB}, {NOT}, {LT}, {GT}, {SLT},
+        {SGT}, {EQ}, {ISZERO}, {AND}, {OR}, {XOR}, {BYTE}, {CALLDATALOAD},
+        {MLOAD}, {MSTORE}, {MSTORE8}, {PUSH*}, {DUP*}, {SWAP*}\}
+    \end{itemize}
+  \end{multicols}
+\end{center}
+
+% \paragraph{Transaction Examples}
+% \subparagraph{Example 1: Alice to Bob}
+% \subparagraph{Example 2: Alice to Contract}
+% \subparagraph{Example 3: Contract to Contract}

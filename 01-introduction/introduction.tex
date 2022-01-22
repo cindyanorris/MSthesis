@@ -1,0 +1,285 @@
+\chapter{Introduction}\label{chap:intro}
+
+% \epigraph{These are revolutionary times. All over the globe men are revolting
+% against old systems of exploitation and oppression, and out of the wombs of a
+% frail world, new systems of justice and equality are being born.}{Martin Luther
+% King, Jr.}
+
+% We are forced to make decisions every day. Some decisions are simple:
+%
+% \begin{itemize}
+%     \item ``What do I eat for dinner?''
+%     \item ``What do I wear to work today?''
+%     \item ``Should I go out tonight?''
+% \end{itemize}
+%
+% Other decisions are more difficult:
+%
+% \begin{itemize}
+%     \item ``Which politician should I vote for?''
+%     \item ``Which stock should I invest in?''
+%     \item ``Should I negotiate for more money on that new job offer?''
+% \end{itemize}
+
+This research investigates blockchain-based decision-making through electoral
+system design and implementation. Decision-making, in its idealized form, is a
+process which entails the evaluation of some problem's context and environment
+in order to identify relevant criteria and variables worth considering. An
+analysis of these criteria and variables can be used to identify a problem's
+decision-space: the individual impact of each variable, their trade-offs, and
+ultimately a set of viable choices to pick from. Weights might be applied to
+the criteria --- determined by the choice-maker's personal values, beliefs, and
+preferences ---  which, when considered with each of the viable choices' risks
+and rewards, could be used to produce a final choice with an optimal outcome.
+This decision-making process is a non-trivial procedure which becomes
+increasingly difficult to consider as the consequences of the decisions become
+more significant; and the analysis process harder to evaluate as the variables,
+factors, goals, and the general environment of the problem becomes more complex.
+For example, it is much more difficult to make decisions that have long-lasting
+impacts than when the impacts are strictly immediate; likewise, decision-making
+which involves complex ethical concerns, e.g., life or death, are much more
+difficult to consider than those which do not.
+
+% The entirety of the decision-making process, evaluation and analysis, would be
+% based on the most reliable information available, be it personal knowledge,
+% sourced from a relevant expert, or discovered if necessary.  All perspectives,
+% biases, values, preferences, and even the evaluation and analysis processes
+% itself would be thoroughly considered, evaluated, cogitated, and reflected on.
+
+% This may all seem unmistakably and painfully obvious, hardly worth mentioning
+% at all; dealing with the decision-making process is one that all adults are
+% intimately familiar with in their day-to-day lives. However, the point to be
+% understood is that the realities of the decision-making process rarely live up
+% to the standards required to meet that of the idealized process.
+
+Decision-making in reality rarely lives up to the standards required to meet
+that of the idealized process; full-knowledge of an environment is rare and
+constraint satisfaction is often sufficient, i.e., most decisions require only a
+``good enough'' solution. Heuristics are often used to trade optimality,
+completeness, accuracy, or precision for speed. Tacit knowledge or intuition is
+used to fill the gaps in one's explicit knowledge or substituted for reliable
+information. And even thorough decision-making processes can still produce
+poor results: over-analysis can cause ``analysis paralysis,'' preventing one
+from arriving at any decision at all; too much information can cause information
+overload, preventing one from properly assimilating knowledge, or worse,
+producing an illusion of knowledge; and still, unconscious biases, instincts, and
+emotions and can subvert well-intended decision-making processes.
+
+% It is somewhat ironic and unfortunate that there seems to be a correlation
+% between the importance of a decision, its complexity, and the likelihood of
+% one straying from the idealized decision-making process.
+% [^Citation Needed]
+
+% \blockquote{ The trade-off criteria for deciding whether to use a heuristic
+% for solving a given problem include the following:
+%
+%     \begin{itemize} \item Optimality: When several solutions exist for a given
+%     problem, does the heuristic guarantee that the best solution will be
+%     found? Is it actually necessary to find the best solution?  \item
+%     Completeness: When several solutions exist for a given problem, can the
+%     heuristic find them all? Do we actually need all solutions?  Many
+%     heuristics are only meant to find one solution.  \item Accuracy and
+%     precision: Can the heuristic provide a confidence interval for the
+%     purported solution? Is the error bar on the solution unreasonably large?
+%     \item Execution time: Is this the best known heuristic for solving this
+%     type of problem? Some heuristics converge faster than others. Some
+%     heuristics are only marginally quicker than classic methods.
+%     \end{itemize}
+%
+%     In some cases, it may be difficult to decide whether the solution found by
+%     the heuristic is good enough, because the theory underlying heuristics is
+%     not very elaborate.  }
+
+All of the complexities regarding decision-making become more complex at scale
+as we attempt to manage group-based decision-making processes: the processes
+themselves become fractured as they are distributed across individuals, personal
+biases manifest themselves as group biases, and the various procedures and
+algorithms used to collect, accumulate, and evaluate individuals' preferences
+are themselves flawed and biased in their own ways.\cite{electoral-handbook}
+% All organizations and communities have processes through which decisions are
+% made.
+Democratic communities aim to make decisions by granting and counting
+individuals' votes; and although voting may seem conceptually simple, there are
+practical and theoretical complexities which are difficult to overcome. The
+complexities with respect to actually implementing such systems often result in
+systems which are mired with imbalances, fraud, and corruption. The
+disenfranchisement of citizens is one example of this and it occurs in many
+ways: lobbying, vote buying, gerrymandering, malicious ballot-box zoning, and
+overly aggressive voter identification requirements to name a few. Many other
+forms of voter suppression and election fraud exist which provide real-world
+examples of the shortcomings a democratic-process might incur and demonstrate
+the complexity of designing such decision-making
+systems.\cite{steal-this-vote,electoral-handbook,confidence-electoral-process}
+
+% In theory democracies help to provide a fairer and more balanced society,
+% however,
+
+Issues such as these in conjunction with the growing usage and near-ubiquitous
+nature of the Internet and personal computers has led many to consider whether
+the Internet could offer a new medium through which votes could be cast.
+Proponents of Internet-based voting systems suggest that it might offer
+solutions to alleviate some of the shortcomings previous democratic institutions
+have fallen victim to. This has become especially relevant as governments and
+societies wrestle with the COVID-19 pandemic and state-sponsored election
+interference. However, online voting has been shown to be fraught with risks,
+and there has been a wealth of research and events which demonstrate the
+plethora of issues one would face in implementing such a system.\cite{serve-analysis,dc-voting-system}
+
+The research with respect to large-scale Internet-based voting systems is clear:
+the potential rewards of such systems do not currently outweigh the
+risks.\cite{comment-on-dod-report} This research does not intend to retread this
+ground, nor does it set out to advocate for such a system. However, digital
+organizations and communities which exist and operate entirely ``on-chain'' are
+everyday springing into existence; this has become especially true since the
+advent of blockchain technologies such as Ethereum, which provides decentralized
+foundations for securely executing arbitrary code.\cite{ethereum.org,DAO} Like
+all organizations these decentralized organizations and communities need
+decision-making processes and systems to reach group consensus. To that end,
+this research explores blockchain-based electoral systems: their feasibility,
+scalability, security, and potential implementations. The unique constraints and
+costs stemming from the underlying blockchain systems and the nascent nature of
+decentralized organizations demand focus; thus, the viability and implementation
+of several electoral systems is explored. Smart contract implementations,
+written in Solidity, are provided which offer insights into the potential
+designs, pitfalls, and costs required to support various electoral systems and
+features. This research demonstrates that secure and verifiable small-scale
+voting systems can be built using ``off-the-shelf'' blockchain technologies
+which support code-execution; however, this is likely only possible where
+privacy, anonymity, and receipt freedom constraints are loosened. This research
+further demonstrates that the costs associated with operating such voting
+systems are steep, likely rendering such systems impractical in most
+circumstances and therefore an inappropriate foundation for large-scale
+elections. Finally, this research identifies which electoral systems and
+features are viable within these blockchain environments and the associated cost
+of supporting and operating these electoral systems and features.
+
+% In particular, blockchain-based communities are considered, and therefore the
+% potential for blockchain-based voting systems are considered as a means to
+% address some of the issues and risks that have been shown to exist in other
+% voting systems. Ultimately, could a transactional, decentralized, secure,
+% verifiable, and electronic voting system exist?
+
+Some of the questions this research initially sought to answer includes:
+
+\begin{enumerate}
+  \item What modalities of governance and electoral systems exist?
+
+  \item What are the advantages and disadvantages of these electoral systems?
+
+  \item What kinds of election processes and procedures, governance modalities,
+    and electoral systems are appropriate within blockchain ecosystems and
+    decentralized organizations?
+
+  \item Of the election processes available, which are blockchain ecosystems
+    capable of supporting?
+
+  \item What is the current state of research with respect to digital and
+   online voting?
+
+  \item Can blockchain technologies be leveraged to improve the reliability,
+    verifiability, or security of elections?
+\end{enumerate}
+
+% \begin{displayquote}
+%     It might reasonably be said that the problem of establishing a modern utopia
+%     is the problem of establishing a totally equitable, all-inclusive system for
+%     making social and political decisions; that is, the problem of establishing
+%     a voting system.
+% \end{displayquote}
+
+% 3 questions we want to answer:
+%
+% \begin{enumerate}
+%     \item Can blockchain tech improve current voting systems? (PoA on machines)
+%     \item Can we build democratic systems on-chain? (For decentralized
+%         organizations)
+%     \item Can we conduct chain governance on-chain?
+% \end{enumerate}
+
+\section{Overview of Materials}
+
+%%
+% TODO: Consider using \subsections{} instead of a list.
+%
+% \subsection{Chapter 1}
+%%
+
+This material is divided into six chapters:
+
+\begin{enumerate}
+  \item \emph{\nameref{chap:intro}}, which introduces this material, poses
+    initial questions, and an offers overview of the subject matter to be
+    reviewed.
+
+  \item \emph{\nameref{chap:background}}, which introduces background materials
+    regarding:
+
+    \begin{itemize}
+      % \item \emph{Governance}, decision-making, consensus mechanisms, common
+      %   modalities of governance, and democratic systems.
+
+      \item \emph{Elections and Electoral Systems}, their modalities, component
+        parts, risks, an overview of some of the most common implementations
+        of electoral systems, and an introduction to the tools available for
+        analyzing and selecting electoral systems.
+
+      \item \emph{Blockchain Technologies}, Bitcoin and Ethereum, their basic
+        concepts and abstractions, internal data structures, algorithms,
+        network architectures and topologies, the properties thereof, and
+        the Ethereum Virtual Machine (EVM).
+    \end{itemize}
+
+  \item \emph{\nameref{chap:literature}}, which introduces and explores:
+
+    \begin{itemize}
+      \item \emph{Internet Voting}, its general procedures and requirements,
+        reviews several novel Internet voting experiments: their architectures,
+        criticisms, and outcomes.
+
+      \item \emph{End-to-End Verifiable Voting}, its purpose, the requirements
+        to support end-to-end verifiability (technical and non-functional),
+        architectural options, existing systems, and common cryptographic
+        techniques available for use in electoral systems.
+    \end{itemize}
+
+  \item \emph{\nameref{chap:methods}}, which covers the methodologies used
+    within this work, borrowing from the tools and methodologies, introduced in
+    Chapter 2's \emph{Background}, for selecting electoral systems, and from the
+    technical and non-functional requirements introduced in Chapter 3's
+    \emph{Literature Review} on end-to-end verifiability:
+
+    \begin{itemize}
+      \item \emph{Requirements and Design Principles}, the guiding principles
+        and requirements which this research aims to support.
+
+      \item \emph{Architecture and Implementation}, the overall design to
+        support various electoral systems: registration and authorization of
+        voters, voter representation and vote delegation, vote casting and
+        tallying processes, and contracts for holding elections backed by
+        various electoral systems: First-Past-the-Post (FPTP), Range Vote (RV),
+        etc.
+    \end{itemize}
+
+  \item \emph{\nameref{chap:results}}, which reviews the results produced
+    through methodologies covered in Chapter 4's \emph{Methods} in two parts:
+
+    \begin{itemize}
+      \item \emph{Test Results}, the testing methodologies and frameworks
+        leveraged, an analysis of the algorithmic complexities, election
+        simulations and costs, and test results of the various electoral systems
+        implemented.
+
+      \item \emph{Analysis}, which reviews the shortcomings, limitations, and
+        areas of improvement required with respect to the methodologies chosen
+        in Chapter 4's \emph{Methods}, offers an interpretation of the results
+        produced in Chapter 5's \emph{Results}, takes a look back at the initial
+        questions introduced in Chapter 1's \emph{Introduction}, offers some
+        context and perspective with respect to how this material fits into the
+        greater body of previous work, and offers some suggestions for future
+        work.
+    \end{itemize}
+
+  \item \emph{\nameref{chap:conclusion}}, summarizes the material covered in the
+    previous chapters, reviews the major results produced in this work, and
+    offers closing thoughts.
+\end{enumerate}

@@ -1,0 +1,121 @@
+\subsubsection{Contract Guarded}
+
+The \solt{contract}, \sol{contract Guarded}, is a \solt{contract} which offers a
+convenient mechanism for easily integrating generalized \solt{contract} access
+control functionality; e.g., \sol{contract MyContract is Guarded {}}.
+\solt{contract Guarded}, by virtue of implementing the \solt{Authorization
+interface}, supports deferring access control responsibilities to an external
+\solt{contract} which implements the \solt{Authority interface} while leaving
+open the possibility for a \solt{contract} to provide its own access control
+implementation by itself implementing the \solt{Authority interface}.
+
+\todo{If I'm changing this from Guard to Guarded then I need to update all of
+the references to Guard.}
+
+\begin{solidity}[contract Guarded]
+contract Guarded is Owned, Authorization {
+  Authority public authority;
+
+  function getAuthority () public constant returns (address _authority) {
+    return address(authority);
+  }
+
+  function setAuthority (address _authority) public auth returns (bool _success) {
+    authority = Authority(_authority);
+    return true;
+  }
+
+  function isAuthorized (address _subject, bytes4 _resource) public returns (bool _isAuthorized) {
+    if (_subject == address(this)) return true;
+    if (authority == Authority(0)) return false;
+    if (_subject == owner) return true;
+    return authority.canCall(_subject, _resource);
+  }
+
+  modifier auth {
+    assert(isAuthorized(msg.sender, msg.sig));
+    _;
+  }
+
+  modifier authorized (bytes4 _resource) {
+    assert(isAuthorized(msg.sender, _resource));
+    _;
+  }
+}
+\end{solidity}
+
+\begin{code}
+  \begin{modifiers}
+    \item \sol{modifier auth ()}, restricts access to \solt{function} calls
+      based on an \solt{address} provided.
+
+      \begin{displayquote}
+        Restriction to \solt{function}[s] is accomplished by comparing the
+        \solt{address} of the \solt{function} \emph{caller}, \sol{msg.sender},
+        against the configured \solt{address}, \sol{address _subject}. If the
+        \solt{address} of the \solt{msg.sender} does not match the
+        \solt{address} of the \solt{_subject} then the \solt{require} statement
+        will force the immediately arrest of \solt{contract} evaluation,
+        \solt{revert} the \emph{state} of the \solt{contract}, refund any
+        remaining \solt{gas}, \solt{gasleft()}, to the \emph{caller}, and
+        exit.\footnotemark{}
+
+        \todo{Should notes be documented differently?}
+      \end{displayquote}
+
+      \footnotetext{
+        Note that the \emph{caller}, \sol{msg.sender}, of the \solt{function}
+        will not necessarily be an \emph{external account}, e.g., human user;
+        the \emph{caller} of the \solt{contract} \solt{function} may itself also
+        be a \solt{contract}, i.e., a \emph{contract account}, which is calling
+        the \solt{contract} \solt{function} from its own \solt{contract}
+        \solt{function}.
+      }
+
+      \begin{parameters}
+      \item \sol{address _subject}, the \emph{subject} who is to be granted
+        access to the \solt{function}.
+
+        \begin{displayquote}
+          The \solt{address} of the \emph{subject} may be \emph{any} Ethereum
+          account, including \emph{contract accounts}.
+        \end{displayquote}
+      \end{parameters}
+
+    \item \sol{modifier authorized (address _resource)}, restricts access to
+      \solt{function} calls based on an \solt{address} provided.
+
+      \begin{displayquote}
+        Restriction to \solt{function}[s] is accomplished by comparing the
+        \solt{address} of the \solt{function} \emph{caller}, \sol{msg.sender},
+        against the configured \solt{address}, \sol{address _subject}. If the
+        \solt{address} of the \solt{msg.sender} does not match the
+        \solt{address} of the \solt{_subject} then the \solt{require} statement
+        will force the immediately arrest of \solt{contract} evaluation,
+        \solt{revert} the \emph{state} of the \solt{contract}, refund any
+        remaining \solt{gas}, \solt{gasleft()}, to the \emph{caller}, and
+        exit.\footnotemark{}
+
+        \todo{Should notes be documented differently?}
+      \end{displayquote}
+
+      \footnotetext{
+        Note that the \emph{caller}, \sol{msg.sender}, of the \solt{function}
+        will not necessarily be an \emph{external account}, e.g., human user;
+        the \emph{caller} of the \solt{contract} \solt{function} may itself also
+        be a \solt{contract}, i.e., a \emph{contract account}, which is calling
+        the \solt{contract} \solt{function} from its own \solt{contract}
+        \solt{function}.
+      }
+
+      \begin{parameters}
+      \item \sol{address _subject}, the \emph{subject} who is to be granted
+        access to the \solt{function}.
+
+        \begin{displayquote}
+          The \solt{address} of the \emph{subject} may be \emph{any} Ethereum
+          account, including \emph{contract accounts}.
+        \end{displayquote}
+      \end{parameters}
+  \end{modifiers}
+\end{code}

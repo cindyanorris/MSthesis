@@ -1,0 +1,75 @@
+\subsubsection{Interface Authorization}
+
+The \solt{interface}, \sol{interface Authorization}, introduces functionality
+for managing authorities, \sol{function getAuthority()} and \sol{function
+setAuthority()}, and also functionality similar to that of an \solt{Authority},
+\sol{function isAuthorized()}.% \footnotemark{}
+
+% \footnotetext{
+%   If I don't update this to just be \sol{interface AuthorityManager} then I
+%   should \emph{really} update \sol{interface Authority} to supply
+%   \sol{function isAuthorized ()}, instead of \sol{function canCall()}, and
+%   update this \solt{interface} to implement/extend \sol{interface Authority}.
+% }
+
+\begin{solidity}[interface Authorization]
+interface Authorization {
+  function getAuthority () public constant returns (address _authority);
+  function setAuthority (address _authority) public returns (bool _success);
+  function isAuthorized (address _subject, bytes4 _resource) public returns (bool _isAuthorized);
+}
+\end{solidity}
+
+\begin{interface}
+  \begin{functions}
+    \item \sol{function getAuthority ()}, returns the \solt{address} of a
+      \solt{contract} which implements the \solt{interface Authority}.
+
+      \begin{returns}
+        \item \sol{address _authority}, the \solt{address} of a \solt{contract}
+          which implments the \solt{interface Authority}.
+      \end{returns}
+
+    \item \sol{function setAuthority (address _authority)}, updates the state of
+      the \solt{contract} to to reflect the new \solt{contract} which provides
+      an implementation of the \solt{Authority interface}.
+      \todo{
+        Make sure the Guard checks that the contract actually implements the
+        interface!!!
+      }
+
+      \begin{parameters}
+        \item \sol{address _authority}, the \solt{address} of a \solt{contract}
+          which implements the \solt{interface Authority}.
+      \end{parameters}
+
+      \begin{returns}
+        \item \sol{bool _success}, resolves to \solt{true} if the operation was
+          successful; otherwise \solt{false}.
+      \end{returns}
+
+    \item \sol{function isAuthorized (address _subject, bytes4 _resource)},
+      evaluates whether some \emph{subject}, Ethereum account, is authorized to
+      access some \emph{resource}, \solt{contract function}.
+
+      \begin{parameters}
+        \item \sol{address _subject}, the \emph{subject}, Ethereum account,
+          whose permissions are being evaluated.\footnotemark{}
+
+          \footnotetext{
+            The \solt{address} of the \emph{subject} may be \emph{any} Ethereum
+            account, including \emph{contract accounts}.
+          }
+
+        \item \sol{bytes4 _resource}, the \emph{resource}, \solt{contract
+          function}, which the \emph{subject's} permissions are being evaluated
+          against.
+      \end{parameters}
+
+      \begin{returns}
+        \item \sol{bool _isAuthorized}, resolves to \solt{true} if the
+          \emph{subject}, \sol{address _subject}, is permitted to access the
+          \emph{resource}, \sol{bytes4 _resource}, otherwise \solt{false}.
+      \end{returns}
+  \end{functions}
+\end{interface}

@@ -1,0 +1,183 @@
+\subsubsection{Theorems and Paradoxes}
+There are a number of interesting theorems and paradoxes regarding voting. These
+theorems illustrate some of the practical limitations of what electoral systems
+can accomplish and are capable of.
+
+\paragraph{Condorcet's Paradox}
+When considering governance and voting, Condorcet's paradox is a good place to
+start; it grounds one to the difficulties of voting. Condorcet's paradox
+demonstrates that the collective preferences of voting actors can be cyclical
+despite the individual preferences of the voting actor's choices being
+transitive and non-cyclical. The following example illustrates Condorcet's
+paradox:
+
+Suppose we have 3 voting actors: $A$, $B$, and $C$ voting for choices $X$, $Y$,
+and $Z$. They rank their votes sequentially from 1 to 3 (lower numbers
+indicating a more favorable choice).
+
+\begin{center}
+    \begin{table}[H]
+        \centering\scriptsize
+        \caption{A cyclic voter preference profile.} \label{tab:condorcet-paradox}
+        \begin{tabu} to 30mm{@{} X[c] | X[c] X[c] X[c] @{}}
+            \toprule
+            & $X$ & $Y$ & $Z$ \\
+            \midrule
+            $A$ & 1 & 2 & 3 \\
+            $B$ & 2 & 3 & 1 \\
+            $C$ & 3 & 1 & 2 \\
+            \bottomrule
+        \end{tabu} \\[2mm]
+        \begin{varwidth}{\textwidth}
+            \begin{itemize}[label=,leftmargin=0mm,topsep=5mm]
+                \item $A$ favors $X > Y > Z$
+                \item $B$ favors $Z > X > Y$
+                \item $C$ favors $Y > Z > X$
+            \end{itemize}
+        \end{varwidth}
+    \end{table}
+\end{center}
+
+
+When measuring the preferences of the voters collectively we observe that choice
+$X$ is preferred to $Y$, that choice $Y$ is collectively preferred to $Z$, and
+that choice $Z$ is collectively preferred to $X$; a seemingly paradoxical result
+($X > Y$ and $Y > Z$ and $Z > X$).
+
+\paragraph{Arrow's Impossibility Theorem}
+Arrow's impossibility theorem, also known as Arrow's paradox, states that no
+rank-order voting method can satisfy the following ``fairness'' conditions:
+
+\begin{enumerate}
+    \item There is no dictator.
+    \item If every voter prefers $X$ to $Y$ then so does the group.
+    \item The relative positions of $X$ and $Y$ in the group ranking depend on
+        their relative positions in the individual rankings, but do not
+        depend on the individual rankings of any irrelevant alternative $Z$.
+\end{enumerate}
+
+The following example demonstrates Arrow's paradox:
+
+\begin{center}
+    \begin{table}[H]
+        \centering\scriptsize
+        \caption{A voter preference profile demonstrating Arrow's paradox.}
+        \label{tab:arrows-paradox}
+        \begin{tabu} to 30mm{@{} X[c] | X[c] X[c] X[c] X[c] @{}}
+            \toprule
+            & $X$ & $Y$ & $Z$ \\
+            \midrule
+            A & 1 & 2 & 3 \\
+            B & 1 & 3 & 2 \\
+            C & 3 & 1 & 2 \\
+            D & 3 & 1 & 2 \\
+            E & 3 & 2 & 1 \\
+            \bottomrule
+        \end{tabu} \\[2mm]
+        \begin{varwidth}{\textwidth}
+            \begin{itemize}[label=,leftmargin=0mm,topsep=5mm]
+                \item A favors $X > Y > Z$
+                \item B favors $X > Z > Y$
+                \item C favors $Y > Z > X$
+                \item D favors $Y > Z > X$
+                \item E favors $Z > Y > X$
+            \end{itemize}
+        \end{varwidth}
+    \end{table}
+\end{center}
+
+After tallying votes, summing each voter's first-preference, we see that $X$ has
+2 votes, $Y$ has 2 votes, and $Z$ has 1 vote. $X$ and $Y$ are tied as first
+choice while $Z$ is an irrelevant alternative. One might expect that if $Z$ were
+eliminated from the ballot that the election result would not be affected.
+However, once done we observe that the election's outcome changes:
+
+\begin{center}
+    \begin{table}[H]
+        \centering\scriptsize
+        \caption{Table \ref{tab:arrows-paradox} with the irrelevant alternative removed.}
+        \label{tab:arrows-paradox-remove-alt}
+        \begin{tabu} to 30mm{@{} X[c] | X[c] X[c] @{}}
+            \toprule
+            & $X$ & $Y$ \\
+            \midrule
+            A & 1 & 2 \\
+            B & 1 & 3 \\
+            C & 3 & 1 \\
+            D & 3 & 1 \\
+            E & 3 & 2 \\
+            \bottomrule
+        \end{tabu} \\[2mm]
+        \begin{varwidth}{\textwidth}
+            \begin{itemize}[label=,leftmargin=0mm,topsep=5mm]
+                \item A favors $X > Y$
+                \item B favors $X > Y$
+                \item C favors $Y > X$
+                \item D favors $Y > X$
+                \item E favors $Y > X$
+            \end{itemize}
+        \end{varwidth}
+    \end{table}
+\end{center}
+
+$Y$ is now favored over $X$ with 3 votes to 2 votes.
+
+\begin{displayquote}[Kenneth Arrow]
+  Most systems are not going to work badly all of the time. All I proved is that
+  all can work badly at times.
+\end{displayquote}
+
+\paragraph{Gibbard–Satterthwaite Theorem}
+The Gibbard–Satterthwaite Theorem is related to Arrow's Impossibility Theorem
+and states the following:
+
+\begin{displayquote}
+    No single-winner voting method exists (using rank-order ballots) satisfying
+    all of the following short list of conditions:
+
+    \begin{enumerate}
+        \item There is no ``dictator.''
+        \item If every voter ranks $X$ top, then $X$ wins the election.
+        \item The voting system is deterministic, i.e. its decision about who
+            wins is based purely on the votes, not on random chance.
+        \item There are at least three candidates running.
+        \item Honest and strategic voting are the same thing, i.e. it never
+            ``pays for a voter to lie,'' i.e. (more precisely) there is no
+            election situation in which a voter, by submitting a dishonest vote
+            claiming $X > Y$ when really she does not agree that $X$ is a better
+            candidate than $Y$, can make the election result come out better
+            (from her point of view) than if she had voted honestly.
+    \end{enumerate}
+\end{displayquote}
+
+In other words, any reasonable voting system which leverages rank-order ballots
+will always be susceptible to manipulation and strategic voting. Consider the
+following example:
+
+\begin{center}
+    \begin{table}[H]
+        \centering\scriptsize
+        \caption{A preference profile demonstrating the Gibbard-Satterthwaite theorem.}
+        \label{tab:gh-theorem}
+        \begin{tabu} to 30mm{@{} X[c] | X[c] X[c] X[c] X[c] @{}}
+            \toprule
+            & $X$ & $Y$ & $Z$ \\
+            \midrule
+            5 & 1 & 2 & 3 \\
+            6 & 2 & 3 & 1 \\
+            8 & 3 & 1 & 2 \\
+            \bottomrule
+        \end{tabu} \\[2mm]
+        \begin{varwidth}{\textwidth}
+            \begin{itemize}[label=,leftmargin=0mm,topsep=5mm]
+                \item 5 voters favor $X > Y > Z$
+                \item 6 voters favor $Z > X > Y$
+                \item 8 voters favor $Y > Z > X$
+            \end{itemize}
+        \end{varwidth}
+    \end{table}
+\end{center}
+
+Under most electoral systems choice $Y$ would be the winner. However, if the 6
+voters who favored $Z$ changed their votes to $X > Z > Y$, betraying $Z$, then a
+choice they may consider a lesser evil, $X$, will win.

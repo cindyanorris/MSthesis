@@ -1,0 +1,55 @@
+\subsubsection{Contract RestrictTo}
+
+The \solt{contract}, \sol{contract RestrictTo}, introduces a single
+\solt{modifier}, \sol{modifier restrictTo}, which requires the caller of the
+\solt{function}, \sol{msg.sender}, to have the same \solt{address} as the
+argument, \sol{address _subject}, provided to the \solt{modifier} when called.
+
+\begin{solidity}[contract RestrictTo]
+contract RestrictTo {
+  modifier restrictTo (address _subject) {
+    require(msg.sender == _subject);
+    _;
+  }
+}
+\end{solidity}
+
+\begin{code}
+  \begin{modifiers}
+    \item \sol{modifier restrictTo (address _subject)}, restricts access to
+      \solt{function} calls based on an \solt{address} provided.
+
+      \begin{displayquote}
+        Restriction to \solt{function}[s] is accomplished by comparing the
+        \solt{address} of the \solt{function} \emph{caller}, \sol{msg.sender},
+        against the configured \solt{address}, \sol{address _subject}. If the
+        \solt{address} of the \solt{msg.sender} does not match the
+        \solt{address} of the \solt{_subject} then the \solt{require} statement
+        will force the immediately arrest of \solt{contract} evaluation,
+        \solt{revert} the \emph{state} of the \solt{contract}, refund any
+        remaining \solt{gas}, \solt{gasleft()}, to the \emph{caller}, and
+        exit.\footnotemark{}
+
+        \todo{Should notes be documented differently?}
+      \end{displayquote}
+
+      \footnotetext{
+        Note that the \emph{caller}, \sol{msg.sender}, of the \solt{function}
+        will not necessarily be an \emph{external account}, e.g., human user;
+        the \emph{caller} of the \solt{contract} \solt{function} may itself also
+        be a \solt{contract}, i.e., a \emph{contract account}, which is calling
+        the \solt{contract} \solt{function} from its own \solt{contract}
+        \solt{function}.
+      }
+
+      \begin{parameters}
+      \item \sol{address _subject}, the \emph{subject} who is to be granted
+        access to the \solt{function}.
+
+        \begin{displayquote}
+          The \solt{address} of the \emph{subject} may be \emph{any} Ethereum
+          account, including \emph{contract accounts}.
+        \end{displayquote}
+      \end{parameters}
+  \end{modifiers}
+\end{code}

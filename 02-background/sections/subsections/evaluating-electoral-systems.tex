@@ -1,0 +1,258 @@
+\subsection{Evaluating Electoral Systems}\label{sec:electoral-criteria}
+Given the wide range of electoral systems that exist, or could conceivably
+exist, it becomes necessary to introduce techniques that can be used to
+objectively analyze and evaluate the various characteristics of electoral
+systems. Social choice theory provides tools which one can use to examine and
+categorize voting systems: by their advantages, their disadvantages, and
+caveats.
+% Voting theory demonstrates interesting and often unexpected results that can
+% occur while using various electoral systems.
+% What follows is an exploration into some of the voting criteria, theorems, and
+% paradoxes introduced through social choice theory.
+
+% TODO: Add this into an appendix.
+% \paragraph{Sets}
+% \subparagraph{Smith Set}
+% \subparagraph{Landau set}
+
+\subsubsection{Criteria}
+It can be difficult to objectively judge and select an electoral system; the
+choice of electoral system will have impacts on the groups, ideologies, and
+candidates that are likely to succeed in a given governance model, and the
+consequences of an electoral system are not always immediately obvious. In order
+to compare and contrast electoral systems more objectively, there are criteria
+that exist to express and describe some characteristic of an electoral system.
+Table~\ref{tab:criteria-compliance} provides a summary of criteria compliance
+across various electoral systems to help visualize the unique range of
+compliance across various electoral systems. The criteria fall into four major
+categories:
+
+\begin{enumerate}
+  \item \emph{Absolute Result Criteria},
+  \item \emph{Relative Result Criteria},
+  \item \emph{Ballot Counting Criteria}, and
+  \item \emph{Strategy Criteria}.
+\end{enumerate}
+
+
+\begin{center}
+  \setstretch{1.5}
+    \scriptsize
+    \begin{longtabu} to \textwidth{@{} X[5.85,l] X[c] X[c] X[c] X[c] X[c] X[c] X[c] X[c] X[c] X[c] X[c] X[c] X[c] X[c] @{}}
+      \caption{Electoral Criteria Compliance\cite{electoral-system-analysis,electoral-handbook,electoral-system-comparison,stv-algorithms,favorite-betrayal-comparison}} \\
+        \toprule
+        \taburowcolors{white..white}
+        Electoral Criterion    & \multicolumn{14}{c}{Electoral System} \\
+                                 \cmidrule{2-15}
+                               & \rot{Approval}  & \rot{Borda Count} & \rot{Copeland}           & \rot{IRV (AV)}  & \rot{Kemeny-Young} & \rot{FPTP}         & \rot{Range Voting} & \rot{Ranked Pairs} & \rot{Runoff Voting} & \rot{Schulze}   & \rot{Sortition} & \rot{Random Ballot} \\
+        \midrule
+        \taburowcolors{white..gray!15}
+        % \endfirsthead%
+        % \toprule
+        % \taburowcolors{white..white}
+        % Electoral Criterion & \multicolumn{14}{c}{Electoral System} \\
+        %                    \cmidrule{2-15}
+        % & \rot{Approval} & \rot{Borda Count} & \rot{Copeland} & \rot{IRV (AV)} & \rot{Kemeny-Young} & \rot{Majority Judgement} & \rot{Minimax} & \rot{Plurality} & \rot{Range Voting} & \rot{Ranked Pairs} & \rot{Runoff Voting} & \rot{Schulze} & \rot{Sortition} & \rot{Random Ballot} \\
+        % \midrule
+        % \taburowcolors{white..gray!15}
+        \endhead\label{tab:criteria-compliance}
+        {Majority}             & \bad[Rated]     & \vbad             & \vgood                   & \vgood          & \vgood             & \vgood             & \vbad              & \vgood             & \vgood              & \vgood          & \vbad           & \vbad \\
+        {Majority Loser}       & \vbad           & \vgood            & \vgood                   & \vgood          & \vgood             & \vbad              & \vbad              & \vgood             & \vgood              & \vgood          & \vbad           & \vbad \\
+        {Mutual Majority}      & \vbad           & \vbad             & \vgood                   & \vgood          & \vgood             & \vbad              & \vbad              & \vgood             & \vbad               & \vgood          & \vbad           & \vbad \\
+        {Condorcet}            & \bad            & \vbad             & \vgood                   & \vbad           & \vgood             & \vbad              & \bad               & \vgood             & \vbad               & \vgood          & \vbad           & \vbad \\
+        {Condorcet Loser}      & \vbad           & \vgood            & \vgood                   & \vgood          & \vgood             & \vbad              & \vbad              & \vgood             & \vgood              & \vgood          & \vbad           & \vbad \\
+        {Smith/IDSA}           & \vbad           & \vbad             & \vgood                   & \vbad           & \vgood             & \vbad              & \vbad              & \vgood             & \vbad               & \vgood          & \vbad           & \vbad \\
+        {LIIA}                 & \good           & \vbad             & \vbad                    & \vbad           & \vgood             & \vbad              & \good              & \vgood             & \vbad               & \vbad           & \vgood          & \vgood \\
+        {IIA}                  & \good           & \vbad             & \vbad                    & \vbad           & \vbad              & \vbad              & \good              & \vbad              & \vbad               & \vbad           & \vgood          & \vgood \\
+        {Cloneproof}           & \good           & \vbad[\teams]     & \vbad[\crowds{}\teams{}] & \vgood          & \vbad[\spoilers]   & \vbad[\spoilers]   & \vgood             & \vgood             & \vbad[\spoilers]    & \vgood          & \vbad           & \vgood \\
+                                 \addlinespace[-0.4ex]
+                                 \cmidrule(l){2-15}
+                                 \addlinespace[-0.80ex]
+        {Monotone}             & \vgood          & \vgood            & \vgood                   & \vbad           & \vgood             & \vgood             & \vgood             & \vgood             & \vbad               & \vgood          & \vgood          & \vgood \\
+        {Consistency}          & \good           & \vgood            & \vbad                    & \vbad           & \bad               & \vgood             & \good              & \vbad              & \vbad               & \vbad           & \vgood          & \vgood \\
+        {Participation}        & \good           & \vgood            & \vbad                    & \vbad           & \vbad              & \vgood             & \good              & \bad               & \vbad               & \bad            & \vgood          & \vgood \\
+        {Reversal Symmetry}    & \vgood          & \vgood            & \vgood                   & \vbad           & \vgood             & \vbad              & \vgood             & \vgood             & \vbad               & \vgood          & \vgood          & \vgood \\
+                                 \addlinespace[-0.4ex]
+                                 \cmidrule(l){2-15}
+                                 \addlinespace[-0.80ex]
+        {Polytime}             & \vgood[$O(n)$]  & \vgood[$O(n)$]    & \good[$O(n^2)$]          & \good[$O(n^2)$] & \vbad[$O(n!)$]     & \vgood[$O(n)$]     & \vgood[$O(n)$]     & \good[$O(n^3)$]    & \vgood[$O(n)$]      & \good[$O(n^3)$] & \vgood[$O(1)$]  & \vgood[$O(n)$] \\
+        {Resolvable}           & \vgood          & \vgood            & \vbad                    & \good           & \vgood             & \vgood             & \vgood             & \vgood             & \vgood              & \vgood          & \vbad           & \vbad \\
+        {Summable}             & \vgood[$O(n)$]  & \vgood[$O(n)$]    & \good[$O(n^2)$]          & \vbad[$O(n!)$]  & \good[$O(n^2)$]    & \vgood[$O(n)$]     & \vgood[$O(n)$]     & \good[$O(n^2)$]    & \good[$O(n)$]       & \good[$O(n^2)$] & \vgood[$O(1)$]  & \vgood[$O(n)$] \\
+                                 \addlinespace[-0.4ex]
+                                 \cmidrule(l){2-15}
+                                 \addlinespace[-0.80ex]
+        {Later-no-Harm}        & \vbad           & \vbad             & \vbad                    & \vgood          & \vbad              & \meh               & \vbad              & \vbad              & \good               & \vbad           & \vgood          & \vgood \\
+        {Later-no-Help}        & \good           & \vgood            & \vbad                    & \vgood          & \vbad              & \meh               & \vgood             & \vbad              & \good               & \vbad           & \vgood          & \vgood \\
+        {No Favorite Betrayal} & \vgood          & \vbad             & \vbad                    & \vbad           & \vbad              & \vbad              & \vgood             & \bad               & \vbad               & \bad            & \vgood          & \vgood \\
+                                 \addlinespace[-0.4ex]
+                                 \cmidrule(l){2-15}
+                                 \addlinespace[-0.80ex]
+        {Ballot Type}          & \bad[\approval] & \good[\ranked]    & \good[\ranked]           & \good[\ranked]  & \good[\ranked]     & \vbad[\singleMark] & \vgood[\range]     & \good[\ranked]     & \vbad[\singleMark]  & \good[\ranked] & \meh             & \vbad[\singleMark] \\
+        {Ranks =}              & \vgood          & \vbad             & \vgood                   & \vbad           & \vgood             & \meh               & \vgood             & \vgood             & \meh                & \vgood         & \meh             & \meh \\
+        {Ranks >2}             & \vbad           & \vgood            & \vgood                   & \vgood          & \vgood             & \vbad              & \vgood             & \vgood             & \bad                & \vgood         & \meh             & \vbad \\
+        \bottomrule
+    \end{longtabu}
+    \begin{multicols}{2}
+      \begin{itemize}[label=,leftmargin=0mm,topsep=0mm]
+        \item \cmark{} Criterion is supported.
+        \item \xmark{} Criterion is unsupported.
+        \item \notApplicable{} Criterion is not applicable.
+        \item \qmark{} Criterion is supported under some conditions.
+        \item \range{} Choices are cardinally ranked by preference.
+        \item \ranked{} Choices are ordinally ranked by preference.
+
+        \item \spoilers{} Vulnerable to spoilers.
+        \item \teams{} Vulnerable to teams.
+        \item \crowds{} Vulnerable to crowds.
+        \item \approval{} Multiple yes/no choice-selections supported.
+        \item \singleMark{} Single yes/no choice-selection supported.
+        \item
+      \end{itemize}
+    \end{multicols}
+\end{center}
+
+\paragraph{Absolute Result Criteria}
+The absolute criteria express whether a candidate must or must not win given the
+state of some ballots.\cite{range-voting-criteria,electoral-system-comparison,electoral-system-comparison-archive}
+
+\subparagraph{Majority Criterion}
+The Majority Criterion (MC) states that a candidate who is preferred by a
+majority of voters must win. This is expressed in two flavors:
+\begin{enumerate}
+    \item \emph{Ranked}, when a choice is preferred by a majority of voters,
+        the choice must win.
+    \item \emph{Rated}, when a choice is given a perfect score by a majority of
+        voters, the choice must win.
+\end{enumerate}
+In a ranked electoral systems these two majority criteria are identical in
+nature.
+
+\subparagraph{Mutual Majority Criterion}
+The Mutual Majority Criterion (MMC) states that if a subset, \verb|S|, of
+candidates is strictly preferred over every candidate in the absolute complement
+of subset \verb|S|, then the winner must come from subset \verb|S|.
+
+\subparagraph{Condorcet Criterion}
+The Condorcet criterion states that a choice who beats out every other choice in
+a pairwise comparison will win.
+
+\subparagraph{Condorcet Loser Criterion}
+The Condorcet loser criterion states that a choice who loses to every other
+choice in a pairwise comparison will always lose.
+
+\paragraph{Relative Result Criteria}
+The relative result criteria express when a candidate should or should not win
+given a win in a similar circumstance.\cite{electoral-system-comparison,electoral-system-comparison-archive,range-voting-criteria}
+
+\subparagraph{Independence of Smith-dominated Alternatives}
+Independence of Smith-dominated Alternatives (ISDA) states that an added or
+removed Smith-dominated choice, one which would lose in direct pairwise
+competition with every other choice, will not affect the result of the contest.
+
+% Does the outcome never change if a Smith-dominated candidate is added or
+% removed (assuming votes regarding the other candidates are unchanged)?
+% Candidate C is Smith-dominated if there is some other candidate A such that C
+% is beaten by A and every candidate B that is not beaten by A etc. Note that
+% although this criterion is classed here as nominee-relative, it has a strong
+% absolute component in excluding Smith-dominated candidates from winning. In
+% fact, it implies all of the absolute criteria above.
+
+\subparagraph{Independence of Irrelevant Alternatives}
+Independence of Irrelevant Alternatives (IIA) is a criterion which states that
+adding or removing a non-winning candidate should not impact the end result.
+
+\subparagraph{Local Independence of Irrelevant Alternatives}
+Local Independence of Irrelevant Alternatives (LIIA) is a criterion which states
+that removing a candidate will not disrupt the transitive ordering.
+
+\subparagraph{Independence of Clone Alternatives}
+The independence of clone alternatives, cloneproof, states that the outcome will
+not change if non-winning candidates similar to an existing candidate are added
+as choices. There are three flavors which fail independence of clones:
+\begin{enumerate}
+    \item \emph{Spoilers}, which are clone negative choices that decrease the
+      chance of a similar choice winning by spreading votes across multiple
+      choices.
+    \item \emph{Teams}, which are clone positive similar choices that together
+        increase the chance of their winning.
+    \item \emph{Crowds}, which are non-winning choices that when cloned change
+        the winner without themselves becoming the winner.
+\end{enumerate}
+
+\subparagraph{Monotonicity Criterion}
+The monotonicity criterion, monotone, states that ranking a winning choice
+higher will not impact the end result.
+
+\subparagraph{Consistency Criterion}
+The Consistency Criterion (CC) states that a winning choice in two complement
+sets of ballots should remain the winner in a final tally combining the two
+sets.
+
+\subparagraph{Participation Criterion}
+The Participation Criterion (PC) states that voting honestly will always produce
+better results than not voting at all.
+
+\subparagraph{Reversal Symmetry}
+The reversal symmetry criterion states that when individual voter preferences
+are universally inverted the original winner will never win.
+
+\paragraph{Ballot Counting Criteria}
+Ballot counting criteria concern the process of vote tallying and winner
+determination. These criteria are especially important with respect to the
+practical implementation of an electoral system.\cite{electoral-system-analysis,electoral-handbook,pr-computability}
+
+\subparagraph{Polynomial Time}
+The polynomial time criterion, polytime, states that the electoral system can
+calculate the winner in linear time with respect to the number of voters and in
+polynomial time with respect to the number of candidates.
+
+\subparagraph{Resolvable}
+A resolvable electoral system is one where determining a winner should be
+entirely deterministic, i.e., the electoral system should not depend on random
+processes such as coin flipping. This criterion is less important in large
+elections where ties are unlikely to occur.
+
+\subparagraph{Summability}
+Summability is a criterion used to express how computationally complex it is to
+store vote data in a compressed format, and consequentially, how difficult it is
+to pre-tally votes at individual polling stations and transmit those tallied
+results to a central counting authority for final counting. Votes are expected
+to be mapped to a summable array which can be used to determine the winner. The
+summability criterion is considered $k$\textsuperscript{th}-order summable if we
+can map $n$ candidates to a matrix of size $n^k$. If no $k$ exists the electoral
+system is considered non-summable.
+
+\paragraph{Strategy Criteria}
+The strategy criteria relate to the incentives and ability for voters to vote
+using some strategy to produce a desired election result.\cite{electoral-system-analysis,stv-strategic-voting,electoral-handbook}
+
+\subparagraph{Later-no-Harm Criterion}
+This criterion states that ranking a preference later on a ballot will not harm
+a choice already listed.
+
+\subparagraph{Later-no-Help Criterion}
+This criterion states that ranking a preference later on a ballot will not help
+a choice already listed.
+
+\subparagraph{No Favorite Betrayal}
+No Favorite Betrayal (NFB) states that ranking a choice above your preferred
+choice will not produce a more desirable or preferred result.
+
+\paragraph{Ballot Format}
+The ballot formats define how a voter is able to express themselves on a ballot.\cite{electoral-handbook}
+
+\subparagraph{Ballot Type}
+The ballot type defines how a voter is permitted to mark their ballot. Popular
+ballot types include single mark, approval, ranked (ordinal), and scored
+(cardinal).
+
+\subparagraph{Equal Ranks}
+A ballot that allows a voter to express equal support for multiple candidates is
+said to support equal ranks.
+
+\subparagraph{Over 2 Ranks}
+A ballot which allows a voter to express interest for a choice in non-binary
+terms is said to support over 2 ranks, e.g., ordinal and cardinal ballots.
+
+% Sub-Sub-Section: Theorems and Paradoxes
+% \input{02-background/sections/subsections/theorems-and-paradoxes}

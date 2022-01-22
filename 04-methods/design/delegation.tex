@@ -1,0 +1,131 @@
+\subsection{Delegation Components}
+The delegation components offer mechanisms for the electorate to vest votes to
+delegates who may vote on their behalf. A delegation hierarchy lends itself to a
+graph representation.\cite{delegative-democracy} Specifically a directed
+acyclic graph (DAG) forest-like structure where pendant and isolated vertices
+represent voters and all other vertices represent delegates. A sink vertex
+represents a delegate who has not delegated their vote further. Directed edges
+represent delegations. The total weight of a voter, their voting power, can be
+measured by recursively calculating the total number of incoming edges for each
+vertex. We represent edges in the graph as follows:
+
+% \begin{displayquote}
+%   In a large and complex organization, the generalist role --- merely knowing
+%   who knows best about something --- is often as important a function as the
+%   specialist role of being able to make good decisions in any particular area.
+%   In traditional large democratic structures, where elected officials in key
+%   positions manage a hierarchical bureaucracy of some kind, most of those
+%   elected positions are effectively generalist positions by practical necessity.
+%   Ordinary voters do not have the interest level or patience required for
+%   electing appropriate people to a large number of specialist positions, and
+%   most would not have the knowledge or connections required to make good
+%   decisions about those positions anyway. Therefore, specialists can usually
+%   only participate in a large organization by being appointed or hired into a
+%   position in the un-elected bureaucracy, and for this reason people are always
+%   effectively subservient to the generalists who choose them. For this reason
+%   the entire field of ``politics'' has effectively become a profession of
+%   generalists, which very little technical knowledge in any particular field is
+%   required or expected (except perhaps law), but in which the most important
+%   characteristic of a candidate is the ability to look good, speak well, and
+%   make the right connections. But it seems unfortunate and problematic that all
+%   specialists are effectively excluded from direct participation in the
+%   democratic process except in role that are strictly subservient to the
+%   generalists: at the very least this structural pathology certainly contributes
+%   to the frequently observed tendency of politicians to ``legislate'' highly
+%   technical issues without adequate consultation with the experts in the
+%   appropriate technical field --- or with a selection of ``experts'' that is
+%   highly skewed for political reasons --- often with disastrous results.
+%   Delegative democracy with open specialized forums and re-delegation provides
+%   an alternative structure that enables both generalists and specialists to
+%   participate directly in the democratic process as first-class policy-makers.
+%   Widely recognized and trusted generalized are given the legitimate ability to
+%   affect the balance of power in specialized forums by directing delegated votes
+%   to chosen specialists, while the specialists participating directly in those
+%   forums also retain the ability to build their own independent power bases and
+%   thus not be completely at the mercy of generalists. At the same time, since
+%   generalists and specialists alike are direct participants in the democratic
+%   process, they have the same fundamental rights and responsibilities and are
+%   all held accountable to all of their constitutes (i.e., those who delegate
+%   votes to them) in the same way.
+% \end{displayquote}
+
+\begin{solidity}[Delegation Structure]
+struct Voter {
+  uint40 weight; // 5 bytes
+  address delegate; // 32 bytes
+}
+\end{solidity}
+
+Each time a delegation occurs a depth first traversal should be performed to
+ensure that no cycles are created by the delegation; doing so maintains the
+acyclic invariant required of the graph to support voter delegation. A simple
+graph coloring algorithm is considered, beginning with white vertices and
+coloring vertices black as they are traversed; traversal starts from the vertex
+representing the voter who is delegating their vote and ends at some sink
+vertex. If no cycle is detected the algorithm should check to see if the voter
+has already delegated their vote; if so, it should traverse down their current
+delegation path, decreasing the weight of each vertex visited by the weight
+of the voter or delegate delegating their vote. Finally, the algorithm should
+record the new delegate address and perform a final traversal, following the
+same path originally traversed while performing cycle detection, increasing the
+weight of each vertex visited along the way by the weight of the voter or
+delegate delegating their vote. More briefly:
+\begin{enumerate}
+  \item Confirm that there are no cycles within the new delegation chain.
+  \item Decrease the weight of the delegates in the old delegation chain.
+  \item Increase the weights of the delegates in the new delegation chain.
+\end{enumerate}
+A complete implementation of this algorithm is as follows:\footnotemark{}
+
+\footnotetext{
+  Here we assume that every voter has their voting weight initialized to 1. This
+  algorithm might be improved by combining the cycle detection and weight
+  accumulation steps while leveraging the \sol{revert()} function to revert the
+  state of the contract if a cycle is detected. We opt not to do that for now
+  because return values are not currently available with the \sol{revert()}
+  functionality.
+}
+
+\begin{solidity}[Vote Delegation]
+mapping (address => Voter) voters;
+
+function delegateVote (address delegate) public auth returns (bool _success) {
+  // The `auth` modifier prevents this function from being
+  // called until the Authority has confirmed that the
+  // the message sender has the proper privileges.
+  Voter cursor;
+  uint40 weight = voters[msg.sender].weight;
+
+  mapping (address => bool) visited;
+  visited[msg.sender] = true;
+  visited[delegate] = true;
+
+  // Cycle Detection
+  cursor = voters[delegate];
+  while (cursor.delegate) {
+    address newDelegate = cursor.delegate;
+    if (visited[newDelegate]) return false;
+    cursor = voters[newDelegate];
+    visited[newDelegate] = true;
+  }
+
+  // Decrement weights of old delegate chain.
+  cursor = voters[msg.sender];
+  while (cursor.delegate) {
+    address newDelegate = cursor.delegate;
+    cursor = voters[newDelegate];
+    cursor.weight -= weight;
+  }
+
+  // Increment weights of new delegate chain.
+  cursor = voters[msg.sender];
+  cursor.delegate = delegate;
+  while (cursor.delegate) {
+    address newDelegate = cursor.delegate;
+    cursor = voters[newDelegate];
+    cursor.weight += weight;
+  }
+
+  return true;
+}
+\end{solidity}

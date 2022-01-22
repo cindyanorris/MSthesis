@@ -1,0 +1,21 @@
+\usepackage{longtable} % Tables
+\usepackage{tabu} % Tables
+\usepackage{booktabs} % Tables
+\usepackage{diagbox} % Diagbox for corner table cell.
+\usepackage{adjustbox} % For rotating table headers
+
+\tabulinesep=3pt % Set table line spacing.
+
+% Rotate text command for table headers
+\newcolumntype{R}[2]{%
+    >{\adjustbox{angle=#1,lap=\width-(#2)}\bgroup}%
+    l%
+    <{\egroup}%
+}
+% \newcommand*\rot{\multicolumn{1}{R{45}{1em}}}% no optional argument here, please!
+% \newcommand*\rot{\raggedright\rotatebox{-50}}
+% NOTE: Requires xparse
+\NewDocumentCommand{\rot}{O{80} O{1em} m}{\makebox[#2][l]{\rotatebox{#1}{#3}}}%
+
+% Table spread
+\renewcommand{\arraystretch}{1.3}

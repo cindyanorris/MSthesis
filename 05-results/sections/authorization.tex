@@ -1,0 +1,160 @@
+\section{Authorization Components}
+
+The authorization components are those which are responsible for managing access
+control for \solt{contract}[s]. This section builds varying complexities of
+access control beginning with:
+
+\begin{enumerate}
+  \item \emph{Primitive Contract Ownership}, which reviews basic access control
+    mechanisms; then
+
+  \item \emph{Generalized Access Control}, which introduces components for
+    guarding access to resources; next
+
+  \item \emph{Access Control Lists}, which demonstrate components for
+    constructing and managing access control lists and integrating them with the
+    components introduced for generalized access control; and finally,
+
+  \item \emph{Registries}, which demonstrates voter registry components
+    leveraging the aforementioned components to build and manage voter
+    databases.
+\end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \caption{Authorization dependency graph modeling.}% \label{fig:authorization}
+  \figurepdf[width=\textwidth]{authorization}
+  % \includegraphics[width=\textwidth]{figures/authorization/figure}
+  % \includestandalone[width=\textwidth]{\fig{authorization}}
+\end{figure}
+
+% Sub-sub-section: Managing Contract Ownership
+\subsection{Primitive Contract Ownership}
+
+Managing \solt{contract} ownership is one of the most basic forms of access
+control in the Ethereum ecosystem. Here we introduce:
+
+\begin{enumerate}
+  \item \sol{interface Ownership}, which defines \solt{function}[s] to
+    express \solt{contract} ownership,
+  \item \sol{contract RestrictTo}, which defines a \solt{modifier} for
+    restricting access to \solt{function} calls based on an \solt{address}, and
+  \item \sol{contract Owned}, a convenience \solt{contract}, which provides an
+    implementation of \sol{interface Ownership} and leverages
+    \sol{contract RestrictTo}.
+\end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \caption{Contract ownership dependency graph modeling.}\label{fig:ownership}
+  \figurepdf[]{ownership}
+\end{figure}
+
+\input{05-results/sections/authorization/contract-restrictto}
+
+\input{05-results/sections/authorization/interface-ownership}
+
+\input{05-results/sections/authorization/contract-owned}
+
+% Sub-sub-section: Generalizing Contract Access Control
+\subsection{Generalizing Contract Access Control}
+
+In order to generalize \solt{contract} access control we introduce:
+
+\begin{enumerate}
+  \item \sol{interface Authority}, which defines \solt{function}[s] to determine
+    whether some \emph{subject} is permitted to access some \emph{resource},
+  \item \sol{contract Authorization}, which defines a \solt{modifier} for
+    restricting access to \solt{function} calls based on an \solt{address}, and
+  \item \sol{contract Guard}, a convenience \solt{contract}, which provides an
+    implementation of \sol{interface Authorization} by aggregating
+    implementations of \sol{interface Authority}.
+\end{enumerate}
+
+Together these components allow us to provide a generalized access control
+model; isolating and deferring the responsibilities of
+authorization.\footnotemark{}
+\todo{Alternative names: Guard, Authority, Enforcer, Authorization}
+
+\footnotetext{
+  I think I would maybe prefer \sol{interface Authorization} to define
+  \sol{isAuthorized} and for \sol{interface Authority} to define
+  \sol{getAuthority} and \sol{setAuthority}.
+
+  A better name in that case might be \sol{interface AuthorityManager}.
+}
+
+\begin{figure}[H]
+  \centering
+  \caption{Generalized contract access control.}% \label{fig:authorization}
+  \figurepdf[]{guard}
+  % \includegraphics[width=\textwidth]{figures/authorization/figure}
+  % \includestandalone[width=\textwidth]{\fig{authorization}}
+\end{figure}
+
+\input{05-results/sections/authorization/interface-authority}
+
+\input{05-results/sections/authorization/interface-authorization}
+
+\input{05-results/sections/authorization/contract-guard}
+
+% Sub-sub-section: Access Control Lists
+\subsection{Access Control Lists}
+
+We introduce access control lists to provide a generalized form of access
+control through a well-understood and common interface:
+
+\begin{enumerate}
+  \item \sol{interface AccessControlList}, which defines the basic actions
+    required for an access control list implementation;
+
+  \item \sol{contract BasicACL}, which provides a basic implementation of
+    \sol{interface AccessControlList}; and
+
+  \item \sol{contract ACLAuthority}, which aggregates an
+    \solt{interface AccessControlList} implementation, \sol{contract BasicACL}
+    in this case, to back an \sol{interface Authority} implementation.
+\end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \caption{Generalized contract access control by way of access control lists.}\label{fig:acl}
+  \figurepdf[]{access-control-lists}
+  % \includegraphics[width=\textwidth]{figures/authorization/figure}
+  % \includestandalone[width=\textwidth]{\fig{authorization}}
+\end{figure}
+
+\input{05-results/sections/authorization/interface-acl}
+
+\input{05-results/sections/authorization/contract-basic-acl}
+
+\input{05-results/sections/authorization/contract-acl-authority}
+
+% Sub-sub-section: Registries
+\subsection{Registries}
+
+Having completed the work of generalizing access control and building access
+control lists, we now introduce a simplified access control model for managing
+voter registration during elections.
+
+\begin{enumerate}
+  \item \sol{interface Registry}, which defines the functions for registering
+    voters for an election, and
+  \item \sol{contract VoterRegistrationAuthority}, which implements and
+    aggregates several \solt{interface}[s] and \solt{interface} implementations
+    --- namely \sol{interface Registry}, \sol{interface Authority}, and
+    \sol{contract ACLAuthority} --- to build a trusted source of registered
+    voters.
+\end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \caption{Simplified election registry.}\label{fig:registry}
+  \figurepdf[]{registry}
+  % \includegraphics[width=\textwidth]{figures/authorization/figure}
+  % \includestandalone[width=\textwidth]{\fig{authorization}}
+\end{figure}
+
+\input{05-results/sections/authorization/interface-registry}
+
+\input{05-results/sections/authorization/contract-voter-registration-authority}

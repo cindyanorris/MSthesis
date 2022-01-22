@@ -1,0 +1,30 @@
+\subsection{Access Control Lists}
+
+We introduce access control lists to provide a generalized form of access
+control through a well-understood and common interface:
+
+\begin{enumerate}
+  \item \sol{interface AccessControlList}, which defines the basic actions
+    required for an access control list implementation;
+
+  \item \sol{contract BasicACL}, which provides a basic implementation of
+    \sol{interface AccessControlList}; and
+
+  \item \sol{contract ACLAuthority}, which aggregates an
+    \solt{interface AccessControlList} implementation, \sol{contract BasicACL}
+    in this case, to back an \sol{interface Authority} implementation.
+\end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \figurepdf[]{access-control-lists}
+  \caption{Generalized contract access control by way of access control lists.}\label{fig:acl}
+  % \includegraphics[width=\textwidth]{figures/authorization/figure}
+  % \includestandalone[width=\textwidth]{\fig{authorization}}
+\end{figure}
+
+\input{appendix/code/authorization/access-control-lists/interface-acl}
+
+\input{appendix/code/authorization/access-control-lists/contract-basic-acl}
+
+\input{appendix/code/authorization/access-control-lists/contract-acl-authority}

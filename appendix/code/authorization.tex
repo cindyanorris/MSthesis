@@ -1,0 +1,41 @@
+\section{Authorization Components}
+
+The authorization components are those which are responsible for managing access
+control for \solt{contract}[s]. This section builds varying complexities of
+access control beginning with:
+
+\begin{enumerate}
+  \item \emph{Primitive Contract Ownership}, which reviews basic access control
+    mechanisms; then
+
+  \item \emph{Generalized Access Control}, which introduces components for
+    guarding access to resources; next
+
+  \item \emph{Access Control Lists}, which demonstrate components for
+    constructing and managing access control lists and integrating them with the
+    components introduced for generalized access control; and finally,
+
+  \item \emph{Registries}, which demonstrates voter registry components
+    leveraging the aforementioned components to build and manage voter
+    databases.
+\end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \figurepdf[width=\textwidth]{authorization}
+  % \includegraphics[width=\textwidth]{figures/authorization/figure}
+  % \includestandalone[width=\textwidth]{\fig{authorization}}
+  \caption{Authorization dependency graph modeling.}% \label{fig:authorization}
+\end{figure}
+
+% Sub-section: Managing Contract Ownership
+\input{appendix/code/authorization/primitive-contract-ownership}
+
+% Sub-section: Generalizing Contract Access Control
+\input{appendix/code/authorization/generalizing-contract-access-control}
+
+% Sub-section: Access Control Lists
+\input{appendix/code/authorization/access-control-lists}
+
+% Sub-section: Registries
+\input{appendix/code/authorization/registries}

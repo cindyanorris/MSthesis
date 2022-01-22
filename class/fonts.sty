@@ -1,0 +1,52 @@
+
+% Set up monospaced font for code.
+\usepackage{fontspec}
+\newfontfamily\firaCode[Contextuals={Alternate}]{Fira Code}
+\setmonofont[Contextuals={Alternate}]{Fira Code}%
+%%
+% Checkmarks and Xs for tables.
+% http://ctan.org/pkg/pifont
+%%
+% \newfontfamily\ballotFont{DejaVu Sans}
+\usepackage{fontawesome}
+\usepackage{pifont}
+% \newcommand{\cmark}{\text{\ding{51}}} %
+% \newcommand{\xmark}{\text{\ding{55}}} %
+% \newcommand{\cmark}{\text{\ding{51}}} %
+% \newcommand{\xmark}{\text{\ding{55}}} %
+\newcommand{\cmark}{\text{\faCheck}} %
+\newcommand{\xmark}{\text{\faRemove}} %
+\newcommand{\qmark}{\text{\faQuestion} } %
+% \newcommand{\qmark}{\text{\faQuestionCircle}} %
+% \newcommand{\score}{\text{\ding{172} }} %
+% \newcommand{\rank}{\text{\faSort}} %
+
+% \newcommand{\rank}{\text{\faReorder}} %
+\newcommand{\rank}{\text{\faListOl}} %
+\newcommand{\score}{\text{\faSortNumericDesc}} %
+\newcommand{\spoilers}{\text{\faUserTimes}} %
+\newcommand{\teams}{\text{\faUserPlus}} %
+\newcommand{\crowds}{\text{\faUsers}} %
+% \newcommand{\ballotSingleMark}{\text{\faRemove}} %
+% \newcommand{\ballotSingleMark}{\text{\faCheckCircle}} %
+\newcommand{\ballotSingleMark}{\text{\faCheckSquare}} %
+\newcommand{\ballotMultiMark}{\text{\faCheckSquareO}} %
+% \newcommand{\notApplicable}{\text{\faCircleO}} %
+% \newcommand{\notApplicable}{\text{\faMinusSquareO}} %
+\newcommand{\notApplicable}{\text{\faMinus}} %
+
+%%
+% Cells for Electoral Criteria Compliance table
+% Includes colors
+%%
+\NewDocumentCommand{\vgood}{ O{\cmark} }{\cellcolor{green!40}#1}
+\NewDocumentCommand{\good}{ O{\cmark} }{\cellcolor{green!20}#1}
+\NewDocumentCommand{\meh}{ O{\notApplicable}}{\cellcolor{gray!20}#1}
+\NewDocumentCommand{\bad}{ O{\xmark} }{\cellcolor{red!20}#1}
+\NewDocumentCommand{\vbad}{ O{\xmark} }{\cellcolor{red!40}#1}
+
+% Ballot types
+\NewDocumentCommand{\singleMark}{ O{$\ballotSingleMark$} }{\cellcolor{red!40}#1}
+\NewDocumentCommand{\approval}{ O{$\ballotMultiMark$} }{\cellcolor{red!40}#1}
+\NewDocumentCommand{\ranked}{ O{$\rank$} }{\cellcolor{red!40}#1}
+\NewDocumentCommand{\range}{ O{$\score$} }{\cellcolor{red!40}#1}

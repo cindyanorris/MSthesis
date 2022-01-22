@@ -1,0 +1,1 @@
+./dependencies/pygments-lexer-solidity-0.5.1/pygments_lexer_solidity/lexer.py

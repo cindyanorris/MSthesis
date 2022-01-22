@@ -1,0 +1,93 @@
+%%
+% BIBLIOGRAPHY
+%%
+
+% Babel should come before csquotes.
+\usepackage[main=english]{babel}
+
+% csquotes should come before biblatex.
+\usepackage[autostyle]{csquotes} % blockquotes
+% \usepackage[style=english]{csquotes} % blockquotes
+
+%%
+% Bibliography
+%%
+% Removes the Table of Contents from an entry within the Table of Contents
+\usepackage[nottoc]{tocbibind}
+% Adds an entry to the Table Contents which includes the Table of Contents
+% \usepackage{tocbibind}
+
+% \usepackage{natbib}
+% \usepackage[style=numeric]{biblatex} % Must come after csquotes
+% \usepackage[natbib=true]{biblatex} % Must come after csquotes
+\usepackage[
+sorting=nyt,
+style=./class/acmart/ACM-Reference-Format,
+% bibstyle=ACM-Reference-Format,
+% bibstyle=./class/acmart/ACM-Reference-Format,
+% citestyle=ACM-Reference-Format,
+% citestyle=./class/acmart/ACM-Reference-Format
+]{biblatex} % Must come after csquotes
+% \usepackage[sorting=nyt,citestyle=numeric]{biblatex} % Must come after csquotes
+% \usepackage[style=ACM-Reference-Format,backend=bibtex,sorting=none]{biblatex} % Must come after csquotes
+% \usepackage{biblatex-chicago}
+
+% Setup superscript square bracket citations.
+\DeclareCiteCommand{\supercite}[\mkbibsuperscript]
+  {\iffieldundef{prenote}
+     {}
+     {\BibliographyWarning{Ignoring prenote argument}}%
+   \iffieldundef{postnote}
+     {}
+     {\BibliographyWarning{Ignoring postnote argument}}}
+  {\usebibmacro{citeindex}%
+   \bibopenbracket\usebibmacro{cite}\bibclosebracket}
+  {\supercitedelim}
+  {}
+
+\DeclareCiteCommand{\nateph@cite@acm}[\mkbibsuperscript]
+  {\iffieldundef{prenote}
+     {}
+     {\BibliographyWarning{Ignoring prenote argument}}%
+   \iffieldundef{postnote}
+     {}
+     {\BibliographyWarning{Ignoring postnote argument}}}
+  {\usebibmacro{citeindex}%
+   \bibopenbracket\usebibmacro{cite}\bibclosebracket}
+  {\supercitedelim}
+  {}
+% Enable superscript square bracket citations.
+% \let\cite=\supercite
+
+% \DeclareMultiCiteCommand{\nateph@multicite@acm}[\mkbibparens]{\parencite}{\multicitedelim}
+%\DeclareDocumentCommand{\nateph@cite@acm
+% Create a new command which surrounds some text with brackets and prepends a
+% non-breakable thin space to the brackets.
+\DeclareDocumentCommand{\nateph@cite@acm@wrapper@brackets}{m}{\addnbthinspace{}\bibopenbracket{}#1\bibclosebracket{}}
+% Create a new multicite command.
+\DeclareMultiCiteCommand{\nateph@multicite@acm}[\nateph@cite@acm@wrapper@brackets]{\parencite}{\multicitedelim}
+% Set cite to the new multicite command.
+\let\cite=\nateph@multicite@acm
+
+%%
+% Citation Delimiter
+%
+% TODO: Investigate `\DeclareDelimFormat` and `\DeclareDelimcontextAlias`
+%
+% NOTE: This also works `\let\multicitedelim=,`; however, `\addcomma` is
+% preferred.
+%%
+%\def\multicitedelim{\addcomma\addthinspace}
+\RenewDocumentCommand{\multicitedelim}{}{\addcomma}
+
+% NOTE: We could also do something like this.
+% \DeclareDocumentCommand{\nateph@cite@acm@multicitedelim}{ O{\multicitedelim} }{#1}
+% \RenewDocumentCommand{\multicitedelim}{}{\nateph@cite@acm@multicitedelim{\addcomma\addthinspace}}
+
+% Set the delimiter between multiple citations to *just* a comma instead of a
+% comma then space.
+% \def\multicitedelim{\addcomma}
+
+% Increase spacing between entries.
+% \setlength\bibitemsep{2.0\itemsep}
+% \setlength\bibitemsep{2.0\baselineskip}

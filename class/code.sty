@@ -1,0 +1,644 @@
+
+\usepackage{verbments} % Fancy verbatim for code
+% \usepackage{fancyvrb} % Fancy verbatim
+\usepackage{fvextra} % Improvements to fancyvrb
+\usepackage{listings}
+
+
+% \usepackage{soul} % For text highlighting.
+\usepackage{soulutf8} % For text highlighting.
+\usepackage{atbegshi} % For text highlighting.
+\usepackage{etoolbox} % For boxes around code
+% TODO: Explore using this for loading other .tex files.
+
+\usepackage{tikz} % Graphics and text highlighting.
+  \usetikzlibrary{tikzmark}
+  \usetikzlibrary{calc}
+  \usetikzlibrary{decorations.pathmorphing}
+  \usetikzlibrary{decorations.pathreplacing}
+  \usetikzlibrary{positioning}
+  \usetikzlibrary{shapes}
+
+% WARNING: This directory should match the output directory used when compiling.
+% See: http://tug.ctan.org/macros/latex/contrib/minted/minted.pdf#subsection.5.1
+\usepackage[outputdir=output]{minted} % For code highlighting
+\setminted{
+  breaklines,
+  autogobble,
+  linenos,
+  numbersep=3mm,
+  fontsize=\scriptsize,
+  breaklines=true,
+  breakbytoken=true,
+  % breakbytokenanywhere=true,
+  stripall=true,
+  escapeinside=||,
+}
+\setmintedinline{
+  fontsize=\scriptsize,
+  % stripall=true,
+  breaklines=true,
+  % linenos=true,
+  %
+  % showspaces=true,
+  % space={\phantom{\textvisiblespace}},
+  % breakafter={\space},
+  % breakaftersymbolpost={\tiny\ensuremath{\hookrightarrow}},
+  % breakaftersymbolpre={\tiny\ensuremath{\hookleftarrow}},
+  %
+  % breakbytoken=true,
+  % breaksymbolleft={\tiny\ensuremath{\hookrightarrow}},
+  % breaksymbolright={\tiny\ensuremath{\hookleftarrow}},
+  % breakbytoken=true,
+  % breakanywheresymbolpre=B,
+  % breakanywheresymbolpost=Y,
+  % breakbytokenanywhere=true,
+  % breaksymbolleft={C},
+  % breaksymbolright={X},
+  % Enables splitting in vim \sol environments on newlines.
+  % See: http://tug.ctan.org/macros/latex/contrib/minted/minted.pdf
+  escapeinside=||,
+}
+
+\usepackage{tcolorbox} % For boxes around code
+  \tcbuselibrary{breakable}
+  \tcbuselibrary{skins}
+  \tcbuselibrary{listings}
+  \tcbuselibrary{minted}
+  \tcbuselibrary{xparse}
+  \tcbuselibrary{}
+  \tcbset{listing engine=minted}
+  \tcbset{minted style=colorful}
+  \tcbset{colback=blue!5!white}
+  \tcbset{breakable=true}
+
+%-----------------------------------------------------------------------
+% CODE BLOCKS/LISTINGS/INLINE
+%-----------------------------------------------------------------------
+
+% Deprecated in favor of `minted`.
+% Listings line wrapping for \verb -like writing.
+\lstset{
+  basicstyle=\ttfamily, %\small\ttfamily,
+  breaklines=true,
+  % keywordstyle=,
+  % frame=single,
+  language=C,
+  % frameround=fttt,
+  columns=fullflexible,
+  % showspaces=true,
+  % prebreak=\mbox{\newline},
+  % postbreak=\mbox{\textcolor{gray}{$\hookrightarrow$}\space},
+}
+
+%%
+% Solidity for inline code.
+%%
+
+\newcommand{\solidityLexer}{solidity-lexer.py:SolidityLexer -x}
+% \newcommand{\solidityLexer}{solidity-lexer.py:SolidityLexer -x -P envname=BVerbatim}
+
+% IMPORTANT: This was my original implementation.
+% \newcommand{\sol}[1]{\mintinline{solidity-lexer.py:SolidityLexer -x}|#1|}
+
+\makeatletter
+\renewcommand{\minted@inputpyg}{%
+  \expandafter\let\expandafter\minted@PYGstyle%
+    \csname PYG\minted@get@opt{style}{default}\endcsname
+  \VerbatimPygments{\PYG}{\minted@PYGstyle}%
+  \ifthenelse{\boolean{minted@isinline}}%
+   {\ifthenelse{\equal{\minted@get@opt{breaklines}{false}}{true}}%
+    {\let\FV@BeginVBox\relax
+     \let\FV@EndVBox\relax
+     \def\FV@BProcessLine##1{%
+       \FancyVerbFormatLine{%
+         \FV@BreakByTokenAnywhereHook
+         \FancyVerbFormatText{\FancyVerbBreakStart##1\FancyVerbBreakStop}}}%
+     \minted@inputpyg@inline}%
+    {\minted@inputpyg@inline}}%
+   {\minted@inputpyg@block}%
+}
+\makeatother
+
+\makeatletter
+\renewcommand{\minted@inputpyg@inline}{%
+  \ifthenelse{\equal{\minted@get@opt{bgcolor}{}}{}}%
+    {\minted@input{\minted@outputdir\minted@infile}}%
+    {\colorbox{\minted@get@opt{bgcolor}{}}{%
+      \minted@input{\minted@outputdir\minted@infile}}}%
+}
+\makeatother
+
+%%
+% Code Text
+%
+% General code-like text rendering.
+%
+% ```tex
+% This code heavily relies on \codeT{array}[s].
+% ```
+%
+% ```md
+% This code heavily relies on `arrays`.
+% ```
+%%
+\newmintinline[codeText]{java}{}
+\NewDocumentCommand{\codeTextOptional}{ O{} }{\codeText{#1}}
+\newcommand{\codet}[1]{\codeText{#1}\codeTextOptional}
+
+\DeclareTotalTCBox{\codeb}{ s m }{
+  verbatim,
+  listing only,
+  minted language={sh},
+  opacityback=0.1,
+  opacityframe=0.1,
+  colframe=blue!75!black,
+  size=small,
+  left=0mm,
+  right=0mm,
+  boxsep=0.5mm,
+}{\mintinline{sh}{#2}}
+
+%%
+% `+v` combined with `escapeinside` allows me to split the `\sol{}` command
+% across multiple lines and maintain spaces:
+%
+% ```tex
+% Some text with that needs to be split across multiple lines \sol{interface|
+% | Ownership}.
+% ```
+% Which is rendered as:
+%
+% ```md
+% Some text with that needs to be split across multiple lines `interface Ownership`.
+% ```
+% Setting an optional argument this way doesn't work.
+% \DeclareTotalTCBox{\sol}{ s o }{
+%%
+% \DeclareTotalTCBox{\sol}{ s +v }{
+
+\DeclareTotalTCBox{\sol}{ s m }{
+  verbatim,
+  listing only,
+  minted language={\solidityLexer},
+  opacityback=0.1,
+  opacityframe=0.1,
+  colframe=blue!75!black,
+  size=small,
+  left=0mm,
+  right=0mm,
+  boxsep=0.5mm,
+}{\mintinline{\solidityLexer}{#2}}
+
+% This implementation of sol works inside of other environments.
+\definecolor{solidityBackground}{HTML}{E7E7F9}
+% \newmintinline[sol]{\solidityLexer}{bgcolor=solidityBackground}
+% \newmintinline[sol]{\solidityLexer}{breaklines}
+
+\newmint[solother]{\solidityLexer}{breaklines, showspaces}
+
+% \newmint[sol]{\solidityLexer}{}
+
+% \DeclareTotalTCBox{\soltext}{ s o O{} }{
+% \DeclareTotalTCBox{\soltext}{ s v O{} }{
+%   verbatim,
+%   listing only,
+%   minted language={\solidityLexer},
+%   opacityback=0.0,
+%   opacityframe=0.0,
+%   colframe=blue!75!black,
+%   size=tight,
+% }{\mintinline{\solidityLexer}{#2}\mintinline{\solidityLexer}{#3}}
+% \newcommand{\solt}{\soltext}
+
+\newmintinline[soltext]{\solidityLexer}{}
+
+%%
+% Given these example:
+% ```
+% \solt{function}[s]
+% \solt{function}
+% ```
+%
+% We end up producing something like this:
+% ```
+% \soltext{function}\soltextOptional[s]
+% \soltext{function}\soltextOptional[]
+% ```
+%
+% Which renders into syntax hilighted code like this:
+% ```
+% functions
+% function
+% ```
+%%
+
+\NewDocumentCommand{\soltextOptional}{ O{} }{\soltext{#1}}
+\newcommand{\solt}[1]{\soltext{#1}\soltextOptional}
+
+% \newmintinline[nate]{\solidityLexer}{}
+
+\newcounter{instance}
+\newcounter{line}
+\newcounter{spaces}
+
+% \NewDocumentCommand{\highlightCodeMark}{}{instance:\arabic{instance}:line:\arabic{line}:spaces:\arabic{spaces}}
+% \NewDocumentCommand{\highlightCodeMark}{}{i:\arabic{instance}:l:\arabic{line}:s:\arabic{spaces}}
+\NewDocumentCommand{\highlightCodeMark}{}{instance:\arabic{instance}}
+\NewDocumentCommand{\highlightCodeMarkStart}{}{highlight:start:\highlightCodeMark{}}
+\NewDocumentCommand{\highlightCodeMarkEnd}{}{highlight:end:\highlightCodeMark{}}
+
+% \NewDocumentCommand{\highlightCodeStart}{}
+%   {\tikzmark{\highlightCodeMarkStart}}
+%
+% \NewDocumentCommand{\highlightCodeEnd}{}
+%   {\tikzmark{\highlightCodeMarkEnd}}
+
+\NewDocumentCommand{\incrementHighlightCodeCounter}{}
+  {\addtocounter{spaces}{2}}
+
+\NewDocumentCommand{\incrementLine}{}
+  {%
+    \ifthenelse{\equal{\arabic{spaces}}{2}}%
+      {\addtocounter{line}{1}}%
+      {}%
+  }
+
+% \NewDocumentCommand{\highlightCode}{ O{\highlightCodeMarkStart} O{\highlightCodeMarkEnd} }
+% {%
+%   % \Verb{
+%     \begin{tikzpicture}[remember picture]%
+%       \draw[overlay, ->, line width=5pt, red] (pic cs:#1) -- (pic cs:#2);%
+%     \end{tikzpicture}%
+%   % }
+% }
+
+\NewDocumentCommand{\highlightCodeStart}{}
+  {\tikzmark{hl:start}}
+
+\NewDocumentCommand{\highlightCodeEnd}{}
+  {\tikzmark{hl:end}}
+% \NewDocumentCommand{\highlightCode}{ O{\highlightCodeMarkStart} O{\highlightCodeMarkEnd} }
+% {%
+%   % \Verb{
+%     \begin{tikzpicture}[remember picture]%
+%       \draw[overlay, ->, line width=5pt, red] (pic cs:hl:start) -- (pic cs:hl:end);%
+%     \end{tikzpicture}%
+%   % }
+% }
+
+\newcounter{tmkcount}
+
+\tikzset{
+  use tikzmark/.style={
+    remember picture,
+    overlay,
+    execute at end picture={
+      \stepcounter{tmkcount}
+    },
+  },
+  tikzmark suffix={-\thetmkcount}
+}
+\NewDocumentCommand{\highlightCode}{}
+{%
+  \begin{tikzpicture}[use tikzmark]%
+  \draw[blue,rounded corners]%
+    % ([shift={(-3pt,2ex)}]pic cs:a) -- ([shift={(3pt,-0.65ex)}]pic cs:b);%
+    (pic cs:a) -- (pic cs:b);%
+    % ([shift={(-3pt,2ex)}]pic cs:a)%
+    %   rectangle%
+    % ([shift={(3pt,-0.65ex)}]pic cs:b);%
+  \end{tikzpicture}%
+}
+
+\definecolor{HLcolor}{RGB}{124,18,18}
+\sethlcolor{HLcolor!20}
+\newcommand\tmark[1]{\tikz[overlay,remember picture] \node (#1) {};}
+% \NewDocumentCommand{\highlightCode}{ O{\highlightCodeMarkStart} O{\highlightCodeMarkEnd} }
+% {%
+%   \begin{tikzpicture}[remember picture, overlay]%
+%     % \draw[HLcolor] let \p1 = (s), \p2 = (e) in ($(\x2,\y1)-(\marginparsep,0)$) -- (e);%
+%     % \draw[HLcolor] let \p1 = (s), \p2 = (e) in ($(\x2,\y1)-(\marginparsep,0)$) -- (e);%
+%     \draw[HLcolor] (e) -- (s);%
+%     % \draw[HLcolor] (s) -- (e);%
+%   \end{tikzpicture}%
+% }
+
+\NewDocumentCommand{\nate}{ m }{\mintinline{\solidityLexer}{#1}}
+\NewDocumentCommand{\natePlus}{ m }
+{%
+  % \setcounter{line}{0}%
+  \stepcounter{instance}%
+  \tikzmark{a}%
+  \scriptsize{\highlightCodeMarkStart}%
+  % \highlightCodeStart{}%
+  % \tmark{s}%
+  \mintinline[
+    fontsize=\scriptsize,
+    breaklines=true,
+    showspaces=true,
+    space={\phantom{\textvisiblespace}},
+    breakafter={\space},
+    breakaftersymbolpre={\tiny\ensuremath{\hookleftarrow}},
+    breakaftersymbolpost={\tiny\ensuremath{\hookrightarrow}},
+    escapeinside=||,
+    stripall=true,
+    linenos=true,
+    numbers=left,
+    % showspaces=true,
+    % space={\phantom{\textvisiblespace}},
+    % space={{\textvisiblespace}},
+    % breakafter={\space},
+  ]{\solidityLexer}%
+  {||#1||}% The code.
+  % \tmark{e}%
+  % \highlightCodeEnd{}%
+  \tikzmark{b}%
+  \scriptsize{\highlightCodeMarkEnd}%
+  \highlightCode{}%
+}
+
+% \renewcommand{\FV@FormattingPrep@PreHook}{ABC}
+
+\renewcommand{\FancyVerbBreakAfterBreak}{%
+  \discretionary%
+    {%
+      \FancyVerbBreakAfterSymbolPre%
+      % \highlightCodeEnd{}%
+      % \tikzmark{b}%
+      % \tmark{e}%
+      \highlightCode{}%
+      % \highlightCodeEnd{}%
+      % \highlightCode{}%
+      % \scriptsize{\highlightCodeMark}%
+      % \stepcounter{spaces}%
+    }%
+    {%
+      % \tikzmark{a}%
+      % \tmark{s}%
+      % \highlightCodeStart{}%
+      % \stepcounter{spaces}%
+      % \incrementLine{}%
+      % \highlightCodeStart{}%
+      % \scriptsize{\highlightCodeMark}%
+      \FancyVerbBreakAfterSymbolPost%
+    }%
+    {}%
+    %{\setcounter{spaces}{0}}%
+}
+
+% \definecolor{Green}{HTML}{00FF00}
+% \renewcommand{\FancyVerbFormatLine}[1]{LineStart\textcolor{Green}{#1}LineEnd}
+% \renewcommand{\FancyVerbFormatLine}[1]{\highlight{#1}}
+%
+% \definecolor{Red}{HTML}{FF0000}
+% \renewcommand{\FancyVerbFormatText}[1]{TextStart\textcolor{Red}{#1}TextEnd}
+% \def\FancyVerbBreakByTokenAnywhereBreak{ABCDEF\allowbreak{}}
+
+
+% \definecolor{Blue}{HTML}{0000FF}
+% \renewcommand{\FancyVerbBreakByTokenAnywhereBreak}[1]{EXAMPLE\textcolor{Blue}{#1}}
+
+% \renewcommand{\FancyVerbBreakAnywhereSymbolPost}[1]{ASDFASDFADSF\textcolor{Blue}{#1}}
+% \renewcommand{\FV@Break@Token}[1]{ASDFASDFADSF\textcolor{Blue}{#1}}
+
+% \def\FancyVerbBreakByTokenAnywhereBreak{\allowbreak{}}
+
+% \renewcommand{\FancyVerbBreakAnywhereBreak}{%
+%   \discretionary{TEST\FancyVerbBreakAnywhereSymbolPre}%
+%     {TEST\FancyVerbBreakAnywhereSymbolPost}{}}
+
+% \NewDocumentCommand{\solt}{ +r O{} }
+%   {\expandafter\FancyVerbBreakStart\soltext{#1}\FancyVerbBreakStop\soltext{#2}}
+
+% \let\highlight\textdecor
+% \renewcommand{\textdecor}[1]{%
+%   \expandafter\FancyVerbBreakStart\highlight{\begingroup#1\endgroup}\FancyVerbBreakStop}
+
+% {\mintinline[
+%     fontsize=\scriptsize,
+%     breaklines=true,
+%     breakbytoken=true,
+%     breakbytokenanywhere=true,
+% ]{solidity-lexer.py:SolidityLexer -x}|#2|\mintinline[
+%     fontsize=\scriptsize,
+%     breaklines=true,
+%     breakbytoken=true,
+%     breakbytokenanywhere=true,
+% ]{solidity-lexer.py:SolidityLexer -x}|#3|}
+
+%\IfBooleanTF{#1}{\textcolor{red}{\ttfamily\bfseries > }}{}%
+    % \mintinline[language=command.com,keywordstyle=\color{blue!35!white}\bfseries]^#2^}
+
+%%
+% Solidity for code blocks.
+% FIXME: This environment doesn't work...
+%%
+% \newenvironment{solidity}
+% {\begin{minted}[]{solidity-lexer.py:SolidityLexer -x}}
+% {\end{minted}\noindent\ignorespaces}
+% \setminted[solidity]{solidity-lexer.py:SolidityLexer -x}
+% \newminted[solidity]{solidity-lexer.py:SolidityLexer}{linenos}
+% \newminted{solidity}{linenos}
+% \BeforeBeginEnvironment{minted}{\begin{tcolorbox}[boxrule=0.3mm]}%
+% \AfterEndEnvironment{minted}{\end{tcolorbox}}%
+
+% \newtcblisting{solidity}[2][]{
+%     listing only,
+%     minted language={solidity-lexer.py:SolidityLexer -x},
+%     minted options={
+%         fontsize=\scriptsize,
+%         breaklines,
+%         autogobble,
+%         linenos,
+%         numbersep=3mm
+%     },
+%     colback=blue!5!white,
+%     colframe=blue!75!black,
+%     left=\lineNumberColumnWidth,
+%     enhanced,
+%     overlay={\begin{tcbclipinterior}\fill[red!20!blue!20!white] (frame.south west)rectangle ([xshift=\lineNumberColumnWidth]frame.north west);\end{tcbclipinterior}}
+%     title={#2},
+%     #1
+% }
+
+\newcommand{\titleColor}{\textcolor[rgb]{1.0,1.0,1.0}}
+\newcommand{\lineNumberColumnWidth}{7mm}
+% \DeclareTCBListing[auto counter,number within=section]{solidity}{ s O{} m }{
+
+%%
+% Define the list of listings formatting for `type={foo}` with `l@foo`
+% Default `type={tcolorbox}`
+% `l@tcolorbox` is identical to the `l@section` setting of LATEX.
+%%
+\makeatletter
+\newcommand{\l@code}{\@dottedtocline{1}{0em}{2.5em}}
+% \renewcommand{\l@tcolorbox}{\@dottedtocline{1}{1.5em}{2.3em}}
+\makeatother
+\DeclareTCBListing[auto counter,number within=chapter,list inside={solidity},list type={lstlisting}]{solidity}{ O{} O{Listing} O{} }{
+  beforeafter skip=0.5\baselineskip plus 2pt,
+  enhanced,
+  listing only,
+  minted language={\solidityLexer},
+  breakable,
+  minted options={ fontsize=\scriptsize, baselinestretch=1.2 },
+  % colframe=blue!30!black!65!white,
+  colframe=blue!40!black!65!white,
+  left=\lineNumberColumnWidth,
+  % sharp corners=all,
+  sharp corners=south,
+  underlay={
+    \begin{tcbclipinterior}
+    \fill[red!20!blue!20!white] (frame.south west)rectangle ([xshift=\lineNumberColumnWidth]frame.north west);
+    \end{tcbclipinterior}
+  },
+  % Title
+  righttitle=1.0mm,
+  lefttitle=1.0mm,
+  titlerule=0.0mm,
+  % fonttitle=\bfseries,
+  fonttitle=\sffamily\textsl,
+  % fonttitle=\,
+  % before title=\faCode~,
+  before title={\footnotesize\IfSubStr{#1}{interface}{\faPuzzlePiece}{\faCode}~~},
+  % title=\titleColor{\solt{#1}},
+  title=\titleColor{\footnotesize\firaCode{#1}},
+  % before title=\titleColor{\textsl{Listing~\thetcbcounter:~}},
+  after title=\hfill\titleColor{{#2~\thetcbcounter}},
+  % The text used when creating a list of listings.
+  list text={#1},
+  % before title=\textcolor[rgb]{0.5,0.5,1.0}{Listing~\thetcbcounter:~},
+  % attach boxed title to top left={
+  %     % xshift=\lineNumberColumnWidth,
+  %     yshift=-0.50mm,
+  % },
+  % boxed title style={
+  %     colback=red!20!blue!20!white,
+  %     sharp corners=southwest,
+  %     skin=enhancedfirst jigsaw,
+  %     boxrule=0.50mm,
+  %     % bottom=-1mm,
+  % },
+  #3
+}
+
+% Append `\noindent\ignorespaces` to line endings.
+% Used to modify the `linenos` in `minted` environments.
+\renewcommand{\theFancyVerbLine}{\sffamily\textcolor[rgb]{0.5,0.5,1.0}{\firaCode\oldstylenums{\arabic{FancyVerbLine}}}}
+
+%-----------------------------------------------------------------------
+% CODE DOCUMENTATION
+%-----------------------------------------------------------------------
+\usepackage[shortlabels,inline]{enumitem} % Change the bullet for unordered lists (itemize).
+\usepackage{environ}
+
+% Configuration for all lists.
+% \setlist{noitemsep}
+\setlist{nosep}
+% \setlist{noitemsep,nosep}
+
+\SetEnumitemKey{documentation}{
+  leftmargin=*,
+  noitemsep,
+}
+\SetEnumitemKey{singlespace}{
+  before*={\begin{spacing}{1.5}},
+  after*={\end{spacing}},
+}
+
+\SetEnumitemKey{nothing}{nolistsep, topsep=-1\parskip}
+  % topsep=0pt,
+  % partopsep=0pt,
+  % parsep=0pt,
+  % itemsep=0pt,
+  % nosep,
+  % beginpenalty=10000,
+  % midpenalty=10000,
+  % endpenalty=10000,
+  % noitemsep,
+% }
+
+% High-level
+\SetEnumitemKey{highlevel}{ documentation, singlespace, nosep, beginpenalty=10000 }
+\SetEnumitemValue{label}{code}{\footnotesize\faCodeFork}
+\SetEnumitemValue{label}{state}{\footnotesize\faDatabase}
+\SetEnumitemValue{label}{interface}{\footnotesize\faInfo}
+
+% Mid-level
+\SetEnumitemKey{midlevel}{ documentation, topsep=1em, itemsep=1em }
+\SetEnumitemValue{label}{function}{\footnotesize\faCogs}
+\SetEnumitemValue{label}{private}{\footnotesize\faLock}
+\SetEnumitemValue{label}{public}{\footnotesize\faUnlock}
+\SetEnumitemValue{label}{constructor}{\footnotesize\faCog}
+
+% Low-level
+\SetEnumitemKey{lowlevel}{ documentation, nosep }
+\SetEnumitemValue{label}{modifier}{\footnotesize\faWrench}
+\SetEnumitemValue{label}{returns}{\footnotesize\faReply}
+\SetEnumitemValue{label}{parameter}{\footnotesize\faShare}
+
+
+
+% Remove vertical space from all list types.
+% \setlist{nosep}
+
+% Itemize spread
+% \setlist[itemize]{label=-, itemsep=-10pt}
+% \setlist[itemize]{itemsep=0pt}
+% \setitemize[2]{label=$\triangleleft$}
+% \setitemize[1]{label=$\triangleleft$}
+
+% \newlist{function}{itemize}{1}
+% \setlist[function]{label=$\triangleleft$}
+
+\newenvironment{documentation}
+  {\begin{spacing}{1.5}}
+  {\end{spacing}}
+
+% \newenvironment{interfaceSpecification}
+% {\begin{interface}
+%   \item \specification
+%     \nolinebreak[4]\nopagebreak[4]
+% }
+% {\end{interface}}
+
+
+\newcommand{\operations}{\emph{Contract Operations}}
+\newlist{code}{enumerate}{1}
+\setlist[code]{ highlevel, label=code, first={\item \operations{}} }
+
+\newcommand{\specification}{\emph{Interface Specification}}
+\newlist{interface}{enumerate}{1}
+\setlist[interface]{ highlevel, label=interface, first={\item \specification{}} }
+
+\newcommand{\attributes}{\emph{Contract State}}
+\newlist{state}{enumerate}{1}
+\setlist[state]{ highlevel, label=state, first={\item \attributes{}} }
+
+%%
+% Code / Interfaces
+%%
+
+\newlist{functions}{enumerate}{1}
+\setlist[functions]{ midlevel, label=function }
+
+\newlist{constructor}{enumerate}{1}
+\setlist[constructor]{ midlevel, label=constructor }
+\newlist{modifiers}{enumerate}{1}
+\setlist[modifiers]{ lowlevel, label=modifier }
+
+\newlist{parameters}{enumerate}{1}
+\setlist[parameters]{ lowlevel, label=parameter }
+
+\newlist{returns}{enumerate}{1}
+\setlist[returns]{ lowlevel, label=returns }
+
+%%
+% State
+%%
+
+\newlist{public}{enumerate}{1}
+\setlist[public]{ midlevel, label=public }
+
+\newlist{private}{enumerate}{1}
+\setlist[private]{ midlevel, label=private }

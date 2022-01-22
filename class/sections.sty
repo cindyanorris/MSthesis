@@ -1,0 +1,40 @@
+% Styling for sections
+% \usepackage{sectsty}
+\usepackage{titlesec}
+\usepackage{titletoc}
+\usepackage{anyfontsize}
+% \chapterfont{\centering}
+
+% \titleformat{\chapter}[display]{\thechapter}
+
+\dottedcontents{chapter}[3.8em]{\bfseries\setstretch{2}}{2.3em}{1pc}
+
+\titleformat{\chapter}[block]
+  {\setstretch{1}\normalfont\fontsize{16pt}{18pt}\bfseries\centering}{\chaptertitlename{}~\thechapter{} -- }{0em}{}
+
+\titleformat{\section}
+  {\normalfont\fontsize{14pt}{16pt}\bfseries}{\thesection}{1em}{}
+
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\itshape}{\thesubsubsection}{1em}{}
+
+%%
+% Prevent large gaps from appearing after sections.
+%%
+% \titlespacing{\section}{0pt}{\parskip}{-\parskip}
+% \titlespacing{\subsection}{0pt}{\parskip}{-\parskip}
+% \titlespacing{\subsubsection}{0pt}{\parskip}{-\parskip}
+\titlespacing{\section}{0pt}{*4}{*2}
+\titlespacing{\subsection}{0pt}{*4}{*2}
+\titlespacing{\subsubsection}{0pt}{*4}{*2}
+
+% \titleformat{\paragraph}[runin]
+%   {\normalfont\normalsize\itshape}{\theparagraph}{1em}{}
+% \titleformat{\subparagraph}[runin]
+%   {\normalfont\normalsize\itshape}{\thesubparagraph}{1em}{}
+%
+% \titlespacing{\paragraph}{0pt}{3.25ex plus 1ex minus .2ex}{1em}
+% \titlespacing{\subparagraph}{\parindent}{3.25ex plus 1ex minus .2ex}{1em}
